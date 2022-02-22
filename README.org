@@ -1,0 +1,25 @@
+* Server
+- python
+  - Dataclasses - Bank account(username, balance, password hash, currency type, account number)
+  - Auth - https://pypi.org/project/bcrypt/
+  - Services, appropriate error returned
+    - id: acc number + name
+    - Create new account(name, password, currency type, init balance) -> account number
+      - CreateAccountMessage("accname", "passworkd", curr.SGD, 0.0)
+    - Close account(id, password) -> message
+    - Deposit(id, password, currency type, amount) -> balance
+    - Withdraw(id, password, currency type, amount) -> balance
+    - Register Monitor(duration)
+    - Idempotent - Query balance(id)
+    - Non Idempotent - Transfer(sender_id, password, recver_id, currency type, amount)
+  - Server loop
+
+  - Message wrapper fn: starts by prepending message length - 32 bit uint
+    - Marshaller
+      - Client to server
+        - Bank Account services arguments: msgid 1, 2, ...: Message format
+          - Big endian
+          - field id: field (1: name (string), 2: account_number(int), 3: balance (float))
+      - Server to client
+        - Error: msgid -1: Message format
+        - Return messages msgid 1,2,3 ...: Message format
