@@ -8,7 +8,7 @@ class Server:
 
     def server_loop(self):
         while True:
-            msg = self.socket.recvfrom(1024)
+            msg = utils.recv_msg(self.socket)
             print(msg)
 
 if __name__ == "__main__":

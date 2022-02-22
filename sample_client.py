@@ -19,7 +19,8 @@ UDPClientSocket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
 
 # Send to server using created UDP socket
 
-UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+# UDPClientSocket.sendto(bytesToSend, serverAddressPort)
+utils.send_msg(UDPClientSocket, serverAddressPort, bytesToSend)
 
  
 
