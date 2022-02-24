@@ -21,10 +21,6 @@ class BankAccount:
     @property
     def accNum(self) -> int:
         return self._accNum
-    
-    @name.setter
-    def accNum(self, accNum: int) -> None:
-        self._accNum = accNum
 
     @property
     def passwordHash(self) -> str:
