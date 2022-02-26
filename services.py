@@ -54,11 +54,41 @@ def deposit(name: str, accNum: int, password: str, currencyType: int, amount: fl
     bankAccount._accBalance += amount
     successStatus = updateRecord(editedBankAccount=bankAccount)
     if successStatus:
-        mssg = "Successfully deposited!"
+        mssg = "Successfully deposited! New Balance " + str (bankAccount._accBalance)
     else:
         mssg = "An error has occurred. Please contact the administrator."
     return mssg
     
+def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: float) -> str:
+    # TODO: add handling of different currency type to which account is created 
+
+    """Withdraw money from an account.
+
+    Keyword arguments:
+    name: Name of Account Holder
+    accNum: Account Number
+    password: Unhashed password of Account Holder
+    currencyType: Currency in which amount is to be withdrawn
+
+    Returns: 
+    Message specifying updated balance in account OR appropriate error message
+    """
+    bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
+    authorized = bankAccount is not None
+    mssg = getAuthorizationMessage(authorized)
+    print(mssg)
+    if not authorized:
+        return mssg
+    if (bankAccount._accBalance >= amount):
+        bankAccount._accBalance -= amount
+        successStatus = updateRecord(editedBankAccount=bankAccount)
+        if successStatus:
+            mssg = "Successfully withdrawn! New Balance " + str (bankAccount._accBalance)
+        else:
+            mssg = "An error has occurred. Please contact the administrator."
+    else:
+        mssg = "Insufficient balance in account"
+    return mssg
 
 if __name__ == '__main__':
     # Test create new account
@@ -66,6 +96,11 @@ if __name__ == '__main__':
     # print("New account created with account number: " + str(accNum))
 
     # Test deposit money into account
-    deposit("Aru", 78852030461275, "password234", 1, 350)
+    # print(deposit("Aru", 78852030461275, "password234", 1, 350))
+    # print("Final values")
+    # readFromBinaryDatabase()
+
+    # Test withdraw money from account
+    print(withdraw("Aks", 25770824875374, "password345", 1, 1000))
     print("Final values")
     readFromBinaryDatabase()
