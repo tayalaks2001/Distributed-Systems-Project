@@ -1,3 +1,4 @@
+from __future__ import annotations
 from dataclasses import dataclass
 from  CurrencyType import CurrencyType
 
@@ -41,3 +42,13 @@ class BankAccount:
     @name.setter
     def accBalance(self, accBalance: float) -> None:
         self._accBalance = accBalance
+    
+    def equals(self, other: BankAccount) -> bool:
+        return self._accNum == other._accNum
+
+    def copy(self, other: BankAccount) -> None:
+        self._name = other._name
+        self._accBalance = other._accBalance
+        self._currencyType = other._currencyType
+        self._passwordHash = other._passwordHash
+
