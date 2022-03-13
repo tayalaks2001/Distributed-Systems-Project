@@ -3,7 +3,7 @@ from typing import List
 
 import bcrypt
 
-from BankAccount import BankAccount
+from bank_account import BankAccount
 
 database_file = "./bank_accounts.dat"
 
@@ -19,11 +19,14 @@ def saveToBinaryDatabase(bankAccount: BankAccount) -> None:
 def readFromBinaryDatabase() -> List[BankAccount]:
     try:
         with open(database_file, 'rb') as f:
-            bankAccounts = pickle.load(f)
+            try:
+                bankAccounts = pickle.load(f)
+            except Exception as e: 
+                print(e)
         print(bankAccounts)
         return bankAccounts
     except: 
-        print("File doesn't create; Going to create...")
+        print("File doesn't exist; Going to create...")
         return []
 
 def checkIDAndPassword(name: str, accNum: int, password: str) -> BankAccount:

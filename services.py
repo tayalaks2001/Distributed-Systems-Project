@@ -93,7 +93,7 @@ def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: f
         mssg = "Insufficient balance in account"
     return mssg
 
-def register_monitor(name: str, accNum: int, password: str, duration: timedelta, clientIPAddress: str):
+def register_monitor(name: str, accNum: int, password: str, duration: timedelta, clientIPAddress: str) -> Monitor:
     """Register monitor for database updates. A client can choose to monitor updates to the database for a chosen period of time. 
 
     Keyword arguments:
@@ -115,18 +115,46 @@ def register_monitor(name: str, accNum: int, password: str, duration: timedelta,
     monitor = Monitor(clientIPAddress, duration)
     return monitor
 
+def query_balance(name: str, accNum: int, password: str) -> float:
+    """Query balance in account.
+
+    Keyword arguments:
+    name: Name of Account Holder
+    accNum: Account Number
+    password: Unhashed password of Account Holder
+
+    Returns: 
+    Account Balance
+    """
+    bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
+    authorized = bankAccount is not None
+    mssg = getAuthorizationMessage(authorized)
+    print(mssg)
+    if not authorized:
+        return mssg
+
+    return bankAccount._accBalance
+
 
 if __name__ == '__main__':
     # Test create new account
-    accNum = create_new_account("Aks", "password345", 1500.0, 3)
-    print("New account created with account number: " + str(accNum))
+    # accNum = create_new_account("Aks", "password345", 1500.0, 3)
+    # print("New account created with account number: " + str(accNum))
 
     # Test deposit money into account
-    print(deposit("Aru", 78852030461275, "password234", 1, 350))
-    print("Final values")
-    readFromBinaryDatabase()
+    # print(deposit("Aru", 36446843756051, "password234", 1, 350))
+    # print("Final values")
+    # readFromBinaryDatabase()
 
     # Test withdraw money from account
-    print(withdraw("Aks", 25770824875374, "password345", 1, 1000))
-    print("Final values")
-    readFromBinaryDatabase()
+    # print(withdraw("Aks", 7711473574125, "password345", 1, 1000))
+    # print("Final values")
+    # readFromBinaryDatabase()
+
+    # Test Query Balance
+    # balance = query_balance("Aks", 7711473574125, "password345")
+    # print("Balance in account: " + str(balance))
+    # print("Final values")
+    # readFromBinaryDatabase()
+
+    pass
