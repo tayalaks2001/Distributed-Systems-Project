@@ -1,5 +1,4 @@
 import socket
-import utils
 
 class Server:
     def __init__(self, addr, port) -> None:

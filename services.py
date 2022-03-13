@@ -1,13 +1,13 @@
 import bcrypt
 import random
 from datetime import *
-from Monitor import Monitor
+from monitor import Monitor
 from services_utils import *
 
-from BankAccount import BankAccount 
+from bank_account import BankAccount 
 
 
-def createNewAccount(name: str, password: str, initialBalance: float, currencyType: int = 1) -> int:
+def create_new_account(name: str, password: str, initialBalance: float, currencyType: int = 1) -> int:
     """Create a new account and assign account number.
 
     Keyword arguments:
@@ -118,13 +118,13 @@ def register_monitor(name: str, accNum: int, password: str, duration: timedelta,
 
 if __name__ == '__main__':
     # Test create new account
-    # accNum = createNewAccount("Aks", "password345", 1500.0, 3)
-    # print("New account created with account number: " + str(accNum))
+    accNum = create_new_account("Aks", "password345", 1500.0, 3)
+    print("New account created with account number: " + str(accNum))
 
     # Test deposit money into account
-    # print(deposit("Aru", 78852030461275, "password234", 1, 350))
-    # print("Final values")
-    # readFromBinaryDatabase()
+    print(deposit("Aru", 78852030461275, "password234", 1, 350))
+    print("Final values")
+    readFromBinaryDatabase()
 
     # Test withdraw money from account
     print(withdraw("Aks", 25770824875374, "password345", 1, 1000))

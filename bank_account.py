@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from  CurrencyType import CurrencyType
+from  currency_type import CurrencyType
 
 @dataclass 
 class BankAccount:
