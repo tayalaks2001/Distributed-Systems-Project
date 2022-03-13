@@ -5,6 +5,7 @@ class Server:
     def __init__(self, addr, port) -> None:
         self.socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.socket.bind((addr, port))
+        self.monitors = []
 
     def server_loop(self):
         while True:

@@ -1,5 +1,7 @@
 import bcrypt
 import random
+from datetime import *
+from Monitor import Monitor
 from services_utils import *
 
 from BankAccount import BankAccount 
@@ -79,6 +81,7 @@ def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: f
     print(mssg)
     if not authorized:
         return mssg
+    
     if (bankAccount._accBalance >= amount):
         bankAccount._accBalance -= amount
         successStatus = updateRecord(editedBankAccount=bankAccount)
@@ -89,6 +92,29 @@ def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: f
     else:
         mssg = "Insufficient balance in account"
     return mssg
+
+def register_monitor(name: str, accNum: int, password: str, duration: timedelta, clientIPAddress: str):
+    """Register monitor for database updates. A client can choose to monitor updates to the database for a chosen period of time. 
+
+    Keyword arguments:
+    name: Name of Account Holder
+    accNum: Account Number
+    password: Unhashed password of Account Holder
+    duration: Duration of time for which client wants to monitor database updates. 
+
+    Returns: 
+    Monitor to be kept track of by server
+    """
+    bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
+    authorized = bankAccount is not None
+    mssg = getAuthorizationMessage(authorized)
+    print(mssg)
+    if not authorized:
+        return mssg
+    
+    monitor = Monitor(clientIPAddress, duration)
+    return monitor
+
 
 if __name__ == '__main__':
     # Test create new account
