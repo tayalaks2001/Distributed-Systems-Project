@@ -3,76 +3,65 @@ import json
 import struct
 from marshalable import Marshalable
 
+
 class Marshaller:
 
 	@staticmethod
-	def marshal(message, numBytes = 8):
+	def marshal(data, numBytes = 8):
+		# primitive data types
+		if (type(data) == str):
+			return Marshaller.marshal_string(data)
+		if (type(data) == int):
+			return Marshaller.marshal_int(data, numBytes)
+		if (type(data) == float):
+			return Marshaller.marshal_float(data)
 
-		res = bytes()
-
-		if (type(message) == str):
-			return Marshaller.marshal_string(message)
-		if (type(message) == int):
-			return Marshaller.marshal_int(message, numBytes)
-		if (type(message) == float):
-			return Marshaller.marshal_float(message)
+		# user-defined classes
+		return Marshaller.marshal_object(data)
 		
-		return TypeError
+	
+	@staticmethod
+	def marshal_string(data):
+		strlen = len(data) + 1
+		result = struct.pack('{}s'.format(strlen), data)
+		strlen = Marshaller.marshal_int(strlen, 4)
+
+		result = strlen + result
+		return result
+
+
+	@staticmethod
+	def marshal_int(data, numBytes = 8):
+		if numBytes == 4:
+			return struct.pack('<i', data)
 		
-	
-	@staticmethod
-	def marshal_string(message):
-		return message.encode('utf-8')
-	
-	@staticmethod
-	def marshal_int(message, numBytes):
-		return message.to_bytes(numBytes, byteorder = 'big', signed = False)
-	
-	@staticmethod
-	def marshal_float(message, numBytes):
-		# return bytes(struct.pack('f', message))
+		return struct.pack('<q', data)
 
-		intVal = int(message)
-		floatVal = message - intVal
+	
+	@staticmethod
+	def marshal_float(data):
+		return struct.pack('<d', data)
+	
 
+	@staticmethod
+	def marshal_object(data):
 		result = bytes()
-		result += Marshaller.marshal_int(intVal, )
-	
+		
+		objType = data.object_type()
+		result += Marshaller.marshal_int(objType, 4)
+
+		fieldDict = data.get_fields()
+		for fieldId, fieldVal in fieldDict.items():
+			result += Marshaller.marshal_int(fieldId, 4)
+			result += Marshaller.marshal(fieldVal)
+
 
 
 class Message:
 
-	def __init__(self, messageID, messageContent, account):
+	def __init__(self, messageID, object):
 		self.messageID = messageID
-		self.messageContent = messageContent
-		self.messageLength = len(messageContent)
-		self.accountObj = account.serialize()
-		self.checkSum = b'00'
+		self.data = object
+
+		self.message = Marshaller.marshal(self.messageID,4) + Marshaller.marshal(self.data)
 		
-
-
-	@staticmethod
-	def marshal(messageID, message, delimiter = ' '):
-
-		# encode message length
-		messageLength = len(message)
-		messageLength = messageLength.to_bytes(4, byteorder = 'big', signed = False)
-
-		
-		# encode message ID
-		messageID = messageID.to_bytes(4, byteorder = 'big', signed = True)
-
-		
-		# encode message content
-		message = message.encode('utf-8')
-
-		
-		# encode delimiter between message fields
-		delimiter = delimiter.encode('utf-8')
-
-		
-		# combine all encoded fields
-		bytestream = messageLength + delimiter + messageID + delimiter + message
-
-		
-		return bytestream
