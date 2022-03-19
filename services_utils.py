@@ -4,6 +4,7 @@ from typing import List
 import bcrypt
 
 from bank_account import BankAccount
+from monitor import Monitor
 
 database_file = "./bank_accounts.dat"
 
@@ -41,6 +42,13 @@ def checkIDAndPassword(name: str, accNum: int, password: str) -> BankAccount:
                  return None
      return None
 
+def getBankAccByAccNum(accNum: int) -> BankAccount:
+    bankAccounts = readFromBinaryDatabase()
+    for bankAccount in bankAccounts:
+         if bankAccount._accNum == accNum:
+             return bankAccount
+    return None
+
 def getAuthorizationMessage(authorized: bool) -> str:
     if authorized:
         return "Credentials Verified"
@@ -61,3 +69,6 @@ def updateRecord(editedBankAccount: BankAccount) -> bool:
     with open(database_file, 'wb') as f:
         pickle.dump(bankAccounts, f)
     return True
+
+def updateMonitors(updateMssg: str) -> List[Monitor]:
+    pass
