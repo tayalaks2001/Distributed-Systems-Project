@@ -59,11 +59,26 @@ class Marshaller:
 		return result
 
 
-class Message:
+def compile_message(messageID: int, object: Marshalable):
+	result = bytes()
+	
+	marshalledMessageID = Marshaller.marshal(messageID, 4)
+	marshalledObject = Marshaller.marshal(object)
 
-	def __init__(self, messageID, object):
-		self.messageID = messageID
-		self.data = object
+	result += marshalledMessageID + marshalledObject
 
-		self.message = Marshaller.marshal(self.messageID,4) + Marshaller.marshal(self.data)
+	messageLen = len(result)
+	marshalledMessageLen = Marshaller.marshal(messageLen, 4)
+	
+	result = marshalledMessageLen + result
+
+	return result
+
+
+if __name__ == '__main__':
+	b = BankAccount("Aks", 123456, "password")
+
+	msg = compile_message(0, b)
+	print(msg)
+
 		
