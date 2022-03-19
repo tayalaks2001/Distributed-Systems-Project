@@ -74,11 +74,4 @@ def compile_message(messageID: int, object: Marshalable):
 
 	return result
 
-
-if __name__ == '__main__':
-	b = BankAccount("Aks", 123456, "password")
-
-	msg = compile_message(0, b)
-	print(msg)
-
 		
