@@ -39,6 +39,11 @@ class Marshalable(metaclass=ABCRegistryMeta):
     def from_fields(fields: T.Dict[int, T.Any]) -> "Marshalable":
         pass
 
+    @staticmethod
+    @abc.abstractmethod
+    def get_field_types() -> T.Dict[int, type]:
+        pass
+
 if __name__ == "__main__":
     print(MarshalableRegistry.get_registry())
     class ExampleMarshalable(Marshalable):
@@ -53,6 +58,10 @@ if __name__ == "__main__":
 
         def get_fields(self):
             return {}
+
+        @staticmethod
+        def get_field_types() -> T.Dict[int, type]:
+            return {1: str}
 
     print(MarshalableRegistry.get_registry())
     print(ExampleMarshalable())
