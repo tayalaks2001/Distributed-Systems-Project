@@ -1,6 +1,8 @@
 import socket
 
 class Server:
+    # TODO: Implement appending of created monitors, removal of expired monitors, and sending callback messages
+
     def __init__(self, addr, port) -> None:
         self.socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.socket.bind((addr, port))

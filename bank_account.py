@@ -1,15 +1,31 @@
 from __future__ import annotations
 from dataclasses import dataclass
+from marshalable import Marshalable
 from  currency_type import CurrencyType
+import typing as T
 
 @dataclass 
-class BankAccount:
+class BankAccount(Marshalable):
     """Class for keeping track of bank account information"""
     _name: str
     _accNum: int
     _passwordHash: str
     _currencyType: CurrencyType = 1
     _accBalance: float = 0.0
+
+    @staticmethod
+    def object_type():
+        # TODO: Add proper object type
+        return 1
+
+    @staticmethod 
+    def from_fields(fields: T.Dict[int, T.Any]) -> "Marshalable":
+        # TODO: Implement actual construction from fields
+        return BankAccount
+    
+    def get_fields(self) -> T.Dict[int, T.Any]:
+        # TODO: Implement actual getting of fields
+        return {}
 
     @property
     def name(self) -> str:

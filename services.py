@@ -29,9 +29,10 @@ def create_new_account(name: str, password: str, initialBalance: float, currency
     # create new bank account object
     bankAccount = BankAccount(_name=name, _accNum=accNum, _passwordHash=passwordHash, _currencyType=currencyType, _accBalance=initialBalance)
 
+    updateMssg = "New Account Created by " + str(bankAccount._name) + "with Account Number: " + str(accNum)
     # save to binary file
     saveToBinaryDatabase(bankAccount)
-    return accNum
+    return accNum, updateMssg
 
 def deposit(name: str, accNum: int, password: str, currencyType: int, amount: float) -> str:
     # TODO: add handling of different currency type to which account is created 
@@ -59,7 +60,10 @@ def deposit(name: str, accNum: int, password: str, currencyType: int, amount: fl
         mssg = "Successfully deposited! New Balance " + str (bankAccount._accBalance)
     else:
         mssg = "An error has occurred. Please contact the administrator."
-    return mssg
+    
+    updateMssg = str(bankAccount._name) + " desposited " + str(amount) + " into their account with Account Number: " + str(accNum)
+
+    return mssg, updateMssg
     
 def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: float) -> str:
     # TODO: add handling of different currency type to which account is created 
@@ -91,7 +95,10 @@ def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: f
             mssg = "An error has occurred. Please contact the administrator."
     else:
         mssg = "Insufficient balance in account"
-    return mssg
+    
+    updateMssg = str(bankAccount._name) + " withdrew " + str(amount) + " from their account with Account Number: " + str(accNum)
+
+    return mssg, updateMssg
 
 def register_monitor(name: str, accNum: int, password: str, duration: timedelta, clientIPAddress: str) -> Monitor:
     """Register monitor for database updates. A client can choose to monitor updates to the database for a chosen period of time. 
@@ -113,7 +120,10 @@ def register_monitor(name: str, accNum: int, password: str, duration: timedelta,
         return mssg
     
     monitor = Monitor(clientIPAddress, duration)
-    return monitor
+
+    updateMssg = str(bankAccount._name) + " with Account Number: " + str(accNum) + " registered a monitor."
+
+    return monitor, updateMssg
 
 def query_balance(name: str, accNum: int, password: str) -> float:
     """Query balance in account.
@@ -133,28 +143,79 @@ def query_balance(name: str, accNum: int, password: str) -> float:
     if not authorized:
         return mssg
 
-    return bankAccount._accBalance
+    updateMssg = str(bankAccount._name) + " queried the balance in their account with Account Number: " + str(accNum)
 
+    return bankAccount._accBalance, updateMssg
+
+def transfer(name: str, accNum: int, password: str, currencyType: int,transferAmount: float, recipientAccNum: int) -> str:
+    """Query balance in account.
+
+    Keyword arguments:
+    name: Name of Account Holder
+    accNum: Account Number
+    password: Unhashed password of Account Holder
+    transferAmount: Amount of money to be transferred
+    recipientAccNum: Account Number of Recipient
+
+    Returns: 
+    Message specifying updated balance in account after transfer OR appropriate error message
+    """
+    bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
+    authorized = bankAccount is not None
+    mssg = getAuthorizationMessage(authorized)
+    print(mssg)
+    if not authorized:
+        return mssg
+
+    if (bankAccount._accBalance < transferAmount):
+        return "Insufficient Balance in account"
+
+    recipientBankAccount = getBankAccByAccNum(recipientAccNum)
+    if recipientBankAccount is None:
+        return "Recipient bank account number provided is incorrect."
+    
+    bankAccount._accBalance -= transferAmount
+    recipientBankAccount._accBalance += transferAmount
+    successStatus1 = updateRecord(editedBankAccount=bankAccount)
+    successStatus2 = updateRecord(editedBankAccount=recipientBankAccount)
+
+    if successStatus1 and successStatus2:
+        mssg = "Successfully transferred! New Balance " + str (bankAccount._accBalance)
+    else:
+        mssg = "An error has occurred. Please contact the administrator."
+
+    updateMssg = str(bankAccount._name) + " transferred " + str(transferAmount) + " from their account with Account Number: " + str(accNum) + " to account number " + str(recipientAccNum)
+
+    return mssg, updateMssg
 
 if __name__ == '__main__':
     # Test create new account
-    # accNum = create_new_account("Aks", "password345", 1500.0, 3)
+    # accNum, updateMssg = create_new_account("Aru", "password234", 0.0, 2)
     # print("New account created with account number: " + str(accNum))
 
     # Test deposit money into account
-    # print(deposit("Aru", 36446843756051, "password234", 1, 350))
+    # mssg, updateMssg = deposit("Sid", 13398636674566, "password123", 1, 500)
+    # print(mssg)
     # print("Final values")
     # readFromBinaryDatabase()
 
     # Test withdraw money from account
-    # print(withdraw("Aks", 7711473574125, "password345", 1, 1000))
+    # mssg, updateMssg = withdraw("Aks", 11456231267882, "password345", 1, 1000)
+    # print(mssg)
     # print("Final values")
     # readFromBinaryDatabase()
 
     # Test Query Balance
-    # balance = query_balance("Aks", 7711473574125, "password345")
+    # balance, updateMssg = query_balance("Aks", 11456231267882, "password345")
     # print("Balance in account: " + str(balance))
     # print("Final values")
     # readFromBinaryDatabase()
+
+    # Test Transfer
+    # mssg, updateMssg = transfer("Aks", 11456231267882, "password345", 1, 500, 13398636674566)
+    # print(mssg)
+    # print("Final values")
+    # readFromBinaryDatabase()
+    # print(updateMssg)
 
     pass

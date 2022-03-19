@@ -1,55 +1,77 @@
 import sys
 import json
+import struct
+from marshalable import Marshalable
 
 
-class BankAccount:
+class Marshaller:
 
-	def __init__(self, acctNumber, name, amount):
-		self.acctNumber = acctNumber
-		self.name = name
-		self.amount = amount
+	@staticmethod
+	def marshal(data, numBytes = 8):
+		# primitive data types
+		if (type(data) == str):
+			return Marshaller.marshal_string(data)
+		if (type(data) == int):
+			return Marshaller.marshal_int(data, numBytes)
+		if (type(data) == float):
+			return Marshaller.marshal_float(data)
 
-	def serialize(self):
-		fieldsDict = {"acctNumber": self.acctNumber, "name": self.name, "amount": self.amount}
-		fieldsJSON = json.dumps(fieldsDict)
-		return fieldsJSON
-
-
-
-class Message:
-
-	def __init__(self, messageID, messageContent, account: BankAccount):
-		self.messageID = messageID
-		self.messageContent = messageContent
-		self.messageLength = len(messageContent)
-		self.accountObj = account.serialize()
-		self.checkSum = b'00'
+		# user-defined classes
+		return Marshaller.marshal_object(data)
 		
+	
+	@staticmethod
+	def marshal_string(data):
+		strlen = len(data) + 1
+		strlen = Marshaller.marshal_int(strlen, 4)
+		# result = struct.pack('s', data)
+		result = data.encode('utf-8')
+
+		result = strlen + result
+		return result
 
 
 	@staticmethod
-	def marshal(messageID, message, delimiter = ' '):
+	def marshal_int(data, numBytes = 8):
+		if numBytes == 4:
+			return struct.pack('<i', data)
+		
+		return struct.pack('<q', data)
 
-		# encode message length
-		messageLength = len(message)
-		messageLength = messageLength.to_bytes(4, byteorder = 'big', signed = False)
+	
+	@staticmethod
+	def marshal_float(data):
+		return struct.pack('<d', data)
+	
+
+	@staticmethod
+	def marshal_object(data):
+		result = bytes()
+		
+		objType = data.object_type()
+		result += Marshaller.marshal_int(objType, 4)
+
+		fieldDict = data.get_fields()
+		for fieldId, fieldVal in fieldDict.items():
+			result += Marshaller.marshal_int(fieldId, 4)
+			result += Marshaller.marshal(fieldVal)
+
+		return result
+
+
+def compile_message(messageID: int, object: Marshalable):
+	result = bytes()
+	
+	marshalledMessageID = Marshaller.marshal(messageID, 4)
+	marshalledObject = Marshaller.marshal(object)
+
+	result += marshalledMessageID + marshalledObject
+
+	messageLen = len(result)
+	marshalledMessageLen = Marshaller.marshal(messageLen, 4)
+	
+	result = marshalledMessageLen + result
+
+	return result
 
 		
-		# encode message ID
-		messageID = messageID.to_bytes(4, byteorder = 'big', signed = True)
-
-		
-		# encode message content
-		# endianness depends on interpreter
-		message = message.encode('utf-8')
-
-		
-		# encode delimiter between message fields
-		delimiter = delimiter.encode('utf-8')
-
-		
-		# combine all encoded fields
-		bytestream = messageLength + delimiter + messageID + delimiter + message
-
-		
-		return bytestream
