@@ -23,8 +23,9 @@ class Marshaller:
 	@staticmethod
 	def marshal_string(data):
 		strlen = len(data) + 1
-		result = struct.pack('{}s'.format(strlen), data)
 		strlen = Marshaller.marshal_int(strlen, 4)
+		# result = struct.pack('s', data)
+		result = data.encode('utf-8')
 
 		result = strlen + result
 		return result
@@ -55,6 +56,7 @@ class Marshaller:
 			result += Marshaller.marshal_int(fieldId, 4)
 			result += Marshaller.marshal(fieldVal)
 
+		return result
 
 
 class Message:
