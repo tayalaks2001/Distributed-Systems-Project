@@ -25,6 +25,8 @@
         - Return messages msgid 1,2,3 ...: Message format
 
 
+Changes to be done by Sid:
+
 - currencyType
 - Message packing for each service
 - BankAccount static methods definition
