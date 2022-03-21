@@ -1,5 +1,3 @@
-import sys
-import json
 import struct
 from marshalable import Marshalable
 
@@ -7,71 +5,119 @@ from marshalable import Marshalable
 class Marshaller:
 
 	@staticmethod
-	def marshal(data, numBytes = 8):
-		# primitive data types
-		if (type(data) == str):
-			return Marshaller.marshal_string(data)
-		if (type(data) == int):
-			return Marshaller.marshal_int(data, numBytes)
-		if (type(data) == float):
-			return Marshaller.marshal_float(data)
+	def marshal(data, num_bytes = 8):
+		
+		result = bytes()
 
+		# primitive data types
+		if isinstance(data, str):
+			result = Marshaller.marshal_string(data)
+		elif isinstance(data, int):
+			result = Marshaller.marshal_int(data, num_bytes)
+		elif isinstance(data, float):
+			result = Marshaller.marshal_float(data)
 		# user-defined classes
-		return Marshaller.marshal_object(data)
+		else:
+			result = Marshaller.marshal_object(data)
+
+		return result
 		
 	
 	@staticmethod
 	def marshal_string(data):
-		strlen = len(data) + 1
-		strlen = Marshaller.marshal_int(strlen, 4)
-		# result = struct.pack('s', data)
-		result = data.encode('utf-8')
 
-		result = strlen + result
+		if not isinstance(data, str):
+			print("Error! marshal_string called on non-string value!")
+			raise TypeError
+
+		result = bytes()
+
+		str_len = len(data) + 1
+		str_len = Marshaller.marshal_int(str_len, 4)
+		content = data.encode('utf-8')	# No format specifier available to marshal string in struct 
+
+		result += str_len + content
+
 		return result
 
 
 	@staticmethod
-	def marshal_int(data, numBytes = 8):
-		if numBytes == 4:
-			return struct.pack('<i', data)
+	def marshal_int(data, num_bytes = 8):
 		
+		if isinstance(data, float):
+			print("marshal_int called on float value! Converting to int...")
+			data = int(data)
+		
+		if not isinstance(data, int):
+			print("Error! marshal_int called on non-int value!")
+			raise TypeError
+
+		if num_bytes == 4:
+			return struct.pack('<i', data)
+
 		return struct.pack('<q', data)
 
 	
 	@staticmethod
 	def marshal_float(data):
+
+		if isinstance(data, int):
+			print("marshal_float on int value! Converting to float...")
+			data = float(data)
+
+		if not isinstance(data, float):
+			print("Error! marshal_float called on non-float value!")
+			raise TypeError
+			
 		return struct.pack('<d', data)
 	
 
 	@staticmethod
 	def marshal_object(data):
+
+		if not issubclass(object, Marshalable):
+			print("Error! marshal_object called on non-marshalable object!")
+			raise TypeError
+
 		result = bytes()
 		
-		objType = data.object_type()
-		result += Marshaller.marshal_int(objType, 4)
+		obj_type = data.object_type()
+		result += Marshaller.marshal_int(obj_type, 4)
 
-		fieldDict = data.get_fields()
-		for fieldId, fieldVal in fieldDict.items():
-			result += Marshaller.marshal_int(fieldId, 4)
-			result += Marshaller.marshal(fieldVal)
+		fields_dict = data.get_fields()
+		fields_type_dict = data.get_field_types()
+
+		for field_id, field_val in fields_dict.items():
+			field_type = fields_type_dict[field_id]
+			result += Marshaller.marshal_int(field_id, 4)
+
+			if field_type == int:
+				result += Marshaller.marshal_int(field_val)
+			elif field_type == float:
+				result += Marshaller.marshal_float(field_val)
+			elif field_type == str:
+				result += Marshaller.marshal_string(field_val)
 
 		return result
 
 
-def compile_message(messageID: int, object: Marshalable):
+def compile_message(object: Marshalable) -> bytes:
+
+	if not issubclass(object, Marshalable):
+		print("Object sent to marshaller is inherited from Marshalable!")
+		raise TypeError
+
 	result = bytes()
 	
-	marshalledMessageID = Marshaller.marshal(messageID, 4)
-	marshalledObject = Marshaller.marshal(object)
+	message_id = object.message_id
+	marshalled_message_id = Marshaller.marshal_int(message_id, 4)
+	marshalled_object = Marshaller.marshal_object(object)
 
-	result += marshalledMessageID + marshalledObject
+	result += marshalled_message_id + marshalled_object
 
-	messageLen = len(result)
-	marshalledMessageLen = Marshaller.marshal(messageLen, 4)
+	message_len = len(result)
+	marshalled_message_len = Marshaller.marshal_int(message_len, 4)
 	
-	result = marshalledMessageLen + result
+	result = marshalled_message_len + result
 
 	return result
-
-		
