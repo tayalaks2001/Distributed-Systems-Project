@@ -23,3 +23,8 @@
       - Server to client
         - Error: msgid -1: Message format
         - Return messages msgid 1,2,3 ...: Message format
+
+
+- currencyType
+- Message packing for each service
+- BankAccount static methods definition

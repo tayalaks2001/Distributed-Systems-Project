@@ -16,16 +16,34 @@ class BankAccount(Marshalable):
     @staticmethod
     def object_type():
         # TODO: Add proper object type
-        return 1
+        return 0
 
     @staticmethod 
     def from_fields(fields: T.Dict[int, T.Any]) -> "Marshalable":
         # TODO: Implement actual construction from fields
-        return BankAccount
+        bankAccount = BankAccount(fields[0], fields[1], fields[2], CurrencyType(fields[3]), fields[4])
+        return bankAccount
     
-    def get_fields(self) -> T.Dict[int, T.Any]:
+    @staticmethod
+    def get_fields(self: BankAccount) -> T.Dict[int, T.Any]:
         # TODO: Implement actual getting of fields
-        return {}
+        return {
+            0: self._name,
+            1: self._accNum,
+            2: self._passwordHash,
+            3: self._currencyType,
+            4: self._accBalance,
+        }
+
+    @staticmethod
+    def get_field_types() -> T.Dict[int, type]:
+        return {
+            0: str,
+            1: int,
+            2: str,
+            3: int,
+            4: float,
+        }
 
     @property
     def name(self) -> str:
