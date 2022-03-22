@@ -24,8 +24,7 @@ class BankAccount(Marshalable):
         bankAccount = BankAccount(fields[0], fields[1], fields[2], CurrencyType(fields[3]), fields[4])
         return bankAccount
     
-    @staticmethod
-    def get_fields(self: BankAccount) -> T.Dict[int, T.Any]:
+    def get_fields(self) -> T.Dict[int, T.Any]:
         # TODO: Implement actual getting of fields
         return {
             0: self._name,
