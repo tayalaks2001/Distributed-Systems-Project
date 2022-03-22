@@ -11,9 +11,9 @@ class Unmarshaller:
     def unmarshal_int(message):
 
         if len(message) == 4:
-            return struct.pack('<i', message)[0]
+            return struct.unpack('<i', message)[0]
         elif len(message) == 8:
-            return struct.pack('<q', message)[0]
+            return struct.unpack('<q', message)[0]
         else:
             print("Error! unmarshal_int is called with an incorrect input!")
             raise ValueError
@@ -26,7 +26,7 @@ class Unmarshaller:
             print("Error! unmarshal_float is called with an incorrect input!")
             raise ValueError
         
-        return struct.pack('<d', message)[0]
+        return struct.unpack('<d', message)[0]
     
 
     @staticmethod
