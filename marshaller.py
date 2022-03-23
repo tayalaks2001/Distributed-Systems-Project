@@ -121,3 +121,8 @@ def compile_message(object: Marshalable) -> bytes:
 	result = marshalled_message_len + result
 
 	return result
+
+if __name__ == '__main__':
+	#print(Marshaller.marshal_string("Hello There"))
+	#print(Marshaller.marshal_int(1024))
+	print(Marshaller.marshal_float(5.1))
