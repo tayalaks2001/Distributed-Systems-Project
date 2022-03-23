@@ -30,7 +30,7 @@ class BankAccount(Marshalable):
             0: self._name,
             1: self._accNum,
             2: self._passwordHash,
-            3: self._currencyType.value,
+            3: self._currencyType,
             4: self._accBalance,
         }
 

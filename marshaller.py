@@ -1,8 +1,5 @@
 import struct
 from marshalable import Marshalable
-from marshalable import MarshalableRegistry
-from bank_account import BankAccount
-from unmarshaller import decompile_message
 
 class Marshaller:
 
@@ -34,7 +31,7 @@ class Marshaller:
 
 		result = bytes()
 
-		str_len = len(data) + 1
+		str_len = len(data)
 		str_len = Marshaller.marshal_int(str_len, 4)
 		content = data.encode('utf-8')	# No format specifier available to marshal string in struct 
 
@@ -113,8 +110,7 @@ def compile_message(object: Marshalable) -> bytes:
 
 	result = bytes()
 	
-	# message_id = object.message_id
-	message_id = 1
+	message_id = object.message_id
 	marshalled_message_id = Marshaller.marshal_int(message_id, 4)
 	marshalled_object = Marshaller.marshal_object(object)
 
