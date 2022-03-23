@@ -1,6 +1,8 @@
 import struct
 from marshalable import Marshalable
-
+from marshalable import MarshalableRegistry
+from bank_account import BankAccount
+from unmarshaller import decompile_message
 
 class Marshaller:
 
@@ -74,18 +76,20 @@ class Marshaller:
 
 	@staticmethod
 	def marshal_object(data):
+		
+		data_class = type(data)
 
-		if not issubclass(object, Marshalable):
+		if not issubclass(data_class, Marshalable):
 			print("Error! marshal_object called on non-marshalable object!")
 			raise TypeError
 
 		result = bytes()
 		
-		obj_type = data.object_type()
+		obj_type = data_class.object_type()
 		result += Marshaller.marshal_int(obj_type, 4)
 
 		fields_dict = data.get_fields()
-		fields_type_dict = data.get_field_types()
+		fields_type_dict = data_class.get_field_types()
 
 		for field_id, field_val in fields_dict.items():
 			field_type = fields_type_dict[field_id]
@@ -103,13 +107,14 @@ class Marshaller:
 
 def compile_message(object: Marshalable) -> bytes:
 
-	if not issubclass(object, Marshalable):
+	if not issubclass(type(object), Marshalable):
 		print("Object sent to marshaller is inherited from Marshalable!")
 		raise TypeError
 
 	result = bytes()
 	
-	message_id = object.message_id
+	# message_id = object.message_id
+	message_id = 1
 	marshalled_message_id = Marshaller.marshal_int(message_id, 4)
 	marshalled_object = Marshaller.marshal_object(object)
 
