@@ -1,6 +1,9 @@
 import abc
 import typing as T
 
+class DuplicateObjectType(BaseException):
+    pass
+
 class MarshalableRegistry(type):
     """Registry that stores all marshalables except base Marshalable class"""
 
@@ -13,6 +16,10 @@ class MarshalableRegistry(type):
             parameter.
         """
         if new_cls.object_type() is not None:
+            if new_cls.object_type() in cls.REGISTRY:
+                object_id = new_cls.object_type()
+                raise DuplicateObjectType(f"{new_cls.__name__} and {cls.REGISTRY[object_id].__name__} both have the same object ID {object_id}")
+
             cls.REGISTRY[new_cls.object_type()] = new_cls
 
         return new_cls
