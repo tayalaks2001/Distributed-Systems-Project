@@ -59,7 +59,7 @@ class RegisterMonitorInput(Marshalable):
         return self._password
     
     @property
-    def account_number(self) -> str:
+    def account_number(self) -> int:
         return self._account_number
 
     @property

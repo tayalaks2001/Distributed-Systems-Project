@@ -110,7 +110,7 @@ def compile_message(object: Marshalable) -> bytes:
 
 	result = bytes()
 	
-	message_id = object.message_id
+	message_id = object.object_type()
 	marshalled_message_id = Marshaller.marshal_int(message_id, 4)
 	marshalled_object = Marshaller.marshal_object(object)
 

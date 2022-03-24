@@ -22,7 +22,7 @@ class BalanceResponse(Marshalable):
         return BalanceResponse(fields[1])
 
 @dataclass
-class BalanceRequest(Marshalable):
+class BalanceMessage(Marshalable):
 
     name: str
     account_num: int
@@ -45,7 +45,7 @@ class BalanceRequest(Marshalable):
 
     @staticmethod
     def from_fields(fields: T.Dict[int, T.Any]):
-        return BalanceRequest(fields[1], fields[2], fields[3])
+        return BalanceMessage(fields[1], fields[2], fields[3])
 
     @staticmethod
     def object_type():
