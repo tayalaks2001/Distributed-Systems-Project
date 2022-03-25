@@ -5,13 +5,14 @@ import typing as T
 @dataclass
 class BalanceResponse(Marshalable):
     balance: float
+    msg: str
 
     def get_fields(self):
-        return {1: self.balance}
+        return {1: self.balance, 2: self.msg}
 
     @staticmethod
     def get_field_types() -> T.Dict[int, type]:
-        return {1: float}
+        return {1: float, 2: str}
     
     @staticmethod
     def object_type():
@@ -19,7 +20,7 @@ class BalanceResponse(Marshalable):
 
     @staticmethod
     def from_fields(fields: T.Dict[int, T.Any]):
-        return BalanceResponse(fields[1])
+        return BalanceResponse(fields[1], fields[2])
 
 @dataclass
 class BalanceMessage(Marshalable):
