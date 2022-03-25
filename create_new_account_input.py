@@ -57,7 +57,7 @@ class CreateNewAccountInput(Marshalable):
     def currency_type(self) -> CurrencyType:
         return self._currency_type
     
-    @name.setter
+    @currency_type.setter
     def currency_type(self, currency_type: int) -> None:
         self._currency_type = CurrencyType(currency_type)
 
@@ -65,7 +65,7 @@ class CreateNewAccountInput(Marshalable):
     def initial_balance(self) -> float:
         return self._initial_balance
     
-    @name.setter
+    @initial_balance.setter
     def initial_balance(self, initial_balance: float) -> None:
         self._initial_balance = initial_balance
 

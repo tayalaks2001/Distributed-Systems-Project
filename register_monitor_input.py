@@ -8,7 +8,7 @@ import typing as T
 
 @dataclass 
 class RegisterMonitorInput(Marshalable):
-    """Class to get input for create account service"""
+    """Class to get input for register monitor service"""
     _name: str
     _account_number: int
     _password: str

@@ -8,7 +8,6 @@ import typing as T
 class CreateNewAccountOutput(Marshalable):
     """Class to produce output for create account service"""
     _account_number: int
-    _update_message: str
 
     @staticmethod
     def object_type():
@@ -18,21 +17,19 @@ class CreateNewAccountOutput(Marshalable):
     @staticmethod 
     def from_fields(fields: T.Dict[int, T.Any]) -> "Marshalable":
         # TODO: Implement actual construction from fields
-        create_account_output = CreateNewAccountOutput(fields[0], fields[1])
+        create_account_output = CreateNewAccountOutput(fields[0])
         return create_account_output
     
     def get_fields(self) -> T.Dict[int, T.Any]:
         # TODO: Implement actual getting of fields
         return {
-            0: self._account_number,
-            1: self._update_message
+            0: self._account_number
         }
 
     @staticmethod
     def get_field_types() -> T.Dict[int, type]:
         return {
             0: int,
-            1: str,
         }
 
     @property
@@ -43,14 +40,5 @@ class CreateNewAccountOutput(Marshalable):
     def account_number(self, account_number: str) -> None:
         self._account_number = account_number
 
-    @property
-    def update_message(self) -> float:
-        return self._update_message
-    
-    @update_message.setter
-    def update_message(self, update_message: float) -> None:
-        self._update_message = update_message
-
     def copy(self, other: CreateNewAccountOutput) -> None:
         self._account_number = other._account_number
-        self._update_message = other._update_message
