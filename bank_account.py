@@ -10,7 +10,7 @@ class BankAccount(Marshalable):
     _name: str
     _accNum: int
     _passwordHash: str
-    _currencyType: CurrencyType = 1
+    _currencyType: CurrencyType = CurrencyType.SGD
     _accBalance: float = 0.0
 
     @staticmethod
@@ -64,7 +64,7 @@ class BankAccount(Marshalable):
     def currencyType(self) -> CurrencyType:
         return self._currencyType
     
-    @name.setter
+    @currencyType.setter
     def currencyType(self, currencyType: int) -> None:
         self._currencyType = CurrencyType(currencyType)
 
@@ -72,7 +72,7 @@ class BankAccount(Marshalable):
     def accBalance(self) -> float:
         return self._accBalance
     
-    @name.setter
+    @accBalance.setter
     def accBalance(self, accBalance: float) -> None:
         self._accBalance = accBalance
     
