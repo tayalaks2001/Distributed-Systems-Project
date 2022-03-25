@@ -86,9 +86,8 @@ def decompile_message(message: bytes) -> list:
 
         message_id = Unmarshaller.unmarshal_int(message[4:8])
         object = Unmarshaller.unmarshal_object(message[8:])
-        object.message_id = message_id
 
-        return object
+        return message_id, object
 
 
     except IndexError:

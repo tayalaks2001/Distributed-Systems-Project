@@ -102,7 +102,7 @@ class Marshaller:
 		return result
 
 
-def compile_message(object: Marshalable) -> bytes:
+def compile_message(message_id: int, object: Marshalable) -> bytes:
 
 	if not issubclass(type(object), Marshalable):
 		print("Object sent to marshaller is inherited from Marshalable!")
@@ -110,7 +110,6 @@ def compile_message(object: Marshalable) -> bytes:
 
 	result = bytes()
 	
-	message_id = object.object_type()
 	marshalled_message_id = Marshaller.marshal_int(message_id, 4)
 	marshalled_object = Marshaller.marshal_object(object)
 
