@@ -6,7 +6,7 @@ from balance_msg import *
 from error_message import ErrorMessage
 from register_monitor_output import *
 from create_new_account_output import *
-from monitor import Monitor
+from Monitor import Monitor
 from services_utils import *
 
 from bank_account import BankAccount 
@@ -119,7 +119,7 @@ def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: f
 
     return response, updateMssg
 
-def register_monitor(name: str, accNum: int, password: str, duration: int, clientIPAddress: str) -> T.Tuple[T.Union[RegisterMonitorOutput, ErrorMessage], Monitor, str]:
+def register_monitor(name: str, accNum: int, password: str, duration: int, clientIPAddress: T.Tuple[str, int]) -> T.Tuple[T.Union[RegisterMonitorOutput, ErrorMessage], Monitor, str]:
     """Register monitor for database updates. A client can choose to monitor updates to the database for a chosen period of time. 
 
     Keyword arguments:
@@ -138,9 +138,10 @@ def register_monitor(name: str, accNum: int, password: str, duration: int, clien
     if not authorized:
         return ErrorMessage(401, mssg), None, "Attempted unauthorized access"
     
-    monitor = Monitor(clientIPAddress, duration)
+    duration_td = timedelta(minutes=duration)
+    monitor = Monitor(clientIPAddress, duration_td)
 
-    mssg = "Created monitor for " + str(duration) + " minutes."
+    mssg = "Created monitor for " + str(duration_td) + " minutes."
 
     updateMssg = str(bankAccount.name) + " with Account Number: " + str(accNum) + " registered a monitor."
 
