@@ -4,11 +4,11 @@ import "reflect"
 
 type QueryBalanceMessage struct {
 	name     string
-	accNum   int
+	accNum   uint64
 	password string
 }
 
-func (q *QueryBalanceMessage) get_fields() map[int]any {
+func (q QueryBalanceMessage) get_fields() map[int]any {
 	m := make(map[int]any)
 	m[1] = q.name
 	m[2] = q.accNum
@@ -16,11 +16,12 @@ func (q *QueryBalanceMessage) get_fields() map[int]any {
 	return m
 }
 
-func (q *QueryBalanceMessage) from_fields(map[int]any) {
-	return 
+func (q QueryBalanceMessage) from_fields(fields map[int]any) Marshalable{
+	//return qMessage;
+	return QueryBalanceMessage{fields[1].(string), fields[2].(uint64), fields[3].(string)} 
 }
 
-func (q * QueryBalanceMessage) get_field_types() map[int]reflect.Type {
+func (q QueryBalanceMessage) get_field_types() map[int]reflect.Type {
 	m := make(map[int]reflect.Type)
 	m[1] = reflect.TypeOf(q.name)
 	m[2] = reflect.TypeOf(q.accNum)
@@ -28,6 +29,6 @@ func (q * QueryBalanceMessage) get_field_types() map[int]reflect.Type {
 	return m
 }
 
-func (q *QueryBalanceMessage) object_type() int {
+func (q QueryBalanceMessage) object_type() int {
 	return 602
 }

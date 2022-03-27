@@ -15,10 +15,10 @@ import (
 	"reflect"
 )
 
-type Marshable interface {
+type Marshalable interface {
 	object_type() int
 	get_fields() map[int]any 
-	from_fields(map[int]any) Marshable
+	from_fields(map[int]any) Marshalable
 	get_field_types() map[int]reflect.Type
 }
 
@@ -39,7 +39,7 @@ type Registry struct {
 }
 
 //Put will register a type against an int
-func (r *Registry) Put(m Marshable) {
+func (r *Registry) Put(m Marshalable) {
 	var object_type int = m.object_type()
 	t := reflect.TypeOf(m)
 	e := &Entry{RefType: t, Name: t.String()}
