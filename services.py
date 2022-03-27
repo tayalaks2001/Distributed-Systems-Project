@@ -2,13 +2,12 @@ import uuid
 # import random
 import bcrypt
 from datetime import *
-from balance_msg import *
-from error_message import ErrorMessage
-from register_monitor_output import *
-from create_new_account_output import *
+from messages.balance_msg import *
+from messages.error_message import ErrorMessage
+from messages.register_monitor_output import *
+from messages.create_new_account_output import *
 from Monitor import Monitor
 from services_utils import *
-
 from bank_account import BankAccount 
 
 

@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from marshalable import Marshalable
+from .marshalable import Marshalable
 import typing as T
 
 @dataclass 

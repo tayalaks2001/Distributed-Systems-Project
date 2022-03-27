@@ -1,16 +1,16 @@
-from error_message import ErrorMessage
 from unmarshaller import decompile_message
-from create_new_account_input import CreateNewAccountInput
 import socket
 import utils
 from marshaller import compile_message
-from dw_msg import DepositMessage, WithdrawMessage
-from balance_msg import BalanceMessage
-from transfer_input import TransferInput
-from transfer_output import TransferOutput
-from register_monitor_input import RegisterMonitorInput
-from register_monitor_output import RegisterMonitorOutput
-from monitor_response import MonitorResponse
+from messages.dw_msg import DepositMessage, WithdrawMessage
+from messages.balance_msg import BalanceMessage
+from messages.transfer_input import TransferInput
+from messages.transfer_output import TransferOutput
+from messages.register_monitor_input import RegisterMonitorInput
+from messages.register_monitor_output import RegisterMonitorOutput
+from messages.monitor_response import MonitorResponse
+from messages.create_new_account_input import CreateNewAccountInput
+from messages.error_message import ErrorMessage
 
 
 msgFromClient       = "Hello UDP Server"

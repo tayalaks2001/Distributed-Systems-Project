@@ -1,6 +1,4 @@
 import abc
-from marshalable import Marshalable
-from monitor_response import MonitorResponse
 from Monitor import Monitor
 from marshaller import compile_message
 import socket
@@ -11,16 +9,19 @@ from collections import defaultdict
 
 import typing as T
 
-import dw_msg
-import balance_msg
-import transfer_input
-import register_monitor_input
-import create_new_account_input
+from messages.marshalable import Marshalable
+from messages.monitor_response import MonitorResponse
+
+import messages.dw_msg as dw_msg
+import messages.balance_msg as balance_msg
+import messages.transfer_input as transfer_input
+import messages.register_monitor_input as register_monitor_input
+import messages.create_new_account_input as create_new_account_input
 
 # To auto register classes
-import transfer_output
-import register_monitor_output
-import create_new_account_output
+import messages.transfer_output
+import messages.register_monitor_output
+import messages.create_new_account_output
 
 import services
 

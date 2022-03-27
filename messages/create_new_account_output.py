@@ -1,6 +1,6 @@
 from __future__ import annotations
 from dataclasses import dataclass
-from marshalable import Marshalable
+from .marshalable import Marshalable
 from  currency_type import CurrencyType
 import typing as T
 

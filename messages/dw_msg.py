@@ -1,4 +1,4 @@
-from marshalable import Marshalable
+from .marshalable import Marshalable
 from dataclasses import dataclass
 import typing as T
 

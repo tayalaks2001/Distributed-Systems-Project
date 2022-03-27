@@ -1,5 +1,5 @@
 import struct
-from marshalable import MarshalableRegistry
+from messages.marshalable import MarshalableRegistry
 
 class Unmarshaller:
 

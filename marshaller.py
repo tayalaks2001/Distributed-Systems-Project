@@ -1,6 +1,5 @@
 import struct
-from marshalable import Marshalable
-from balance_msg import BalanceMessage
+from messages.marshalable import Marshalable
 
 class Marshaller:
 
@@ -122,11 +121,3 @@ def compile_message(message_id: int, object: Marshalable) -> bytes:
 	result = marshalled_message_len + result
 
 	return result
-
-if __name__ == '__main__':
-	print(Marshaller.marshal_string("Hello There").hex())
-	print(Marshaller.marshal_int(1024).hex())
-	print(Marshaller.marshal_float(5.1).hex())
-	print(Marshaller.marshal_object(BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
-	print(compile_message(12, BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
-
