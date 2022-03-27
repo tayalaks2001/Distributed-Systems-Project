@@ -2,15 +2,11 @@
 
 //Crucial Note: All the maps here have values which are reflect.Type. In order to obtain the type itself and initialize a new var, refer to the following example (syntax may be slightly wrong):
 
-// m = q.get_fields()
-// intType1 := m[1].Elem() //let's say that the first attribute of marshalable q is indeed an int
-// intPtr1 = reflect.New(intType1)
-// firstAttr = intPtr1.Elem().Interface().(int) //this variable will be an integer initialized with the default value of 0. We can then proceed to manipulate it how we desire
-
 package main
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"reflect"
 )
@@ -67,4 +63,16 @@ func NewRegistry(options ...func(*Registry) error) (*Registry, error) {
 		}
 	}
 	return r, nil
+}
+
+func getMarshalableObject(unwrapped_val interface{}) Marshalable {
+	var object Marshalable = nil
+	switch unwrapped_val.(type) {
+		//The type is a pointer to the foo object
+		case *QueryBalanceMessage:
+			object = QueryBalanceMessage{}
+		default: 
+			fmt.Println("No object with specified ID found")
+		}
+	return object
 }
