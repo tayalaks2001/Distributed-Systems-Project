@@ -54,7 +54,7 @@ class Marshaller:
 		if num_bytes == 4:
 			return struct.pack('<i', data)
 
-		return struct.pack('<q', data)
+		return struct.pack('<Q', data)
 
 	
 	@staticmethod

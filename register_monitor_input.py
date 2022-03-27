@@ -1,7 +1,6 @@
 from __future__ import annotations
 from ast import Str
 from dataclasses import dataclass
-from datetime import timedelta
 from marshalable import Marshalable
 from  currency_type import CurrencyType
 import typing as T
@@ -12,8 +11,7 @@ class RegisterMonitorInput(Marshalable):
     _name: str
     _account_number: int
     _password: str
-    _duration: timedelta
-    _client_ip_address: str
+    _duration: int
 
     @staticmethod
     def object_type():
@@ -23,7 +21,7 @@ class RegisterMonitorInput(Marshalable):
     @staticmethod 
     def from_fields(fields: T.Dict[int, T.Any]) -> "Marshalable":
         # TODO: Implement actual construction from fields
-        register_monitor_input = RegisterMonitorInput(fields[0], fields[1], fields[2], fields[3], fields[4])
+        register_monitor_input = RegisterMonitorInput(fields[0], fields[1], fields[2], fields[3])
         return register_monitor_input
     
     def get_fields(self) -> T.Dict[int, T.Any]:
@@ -33,7 +31,6 @@ class RegisterMonitorInput(Marshalable):
             1: self._account_number,
             2: self._password,
             3: self._duration,
-            4: self._client_ip_address,
         }
 
     @staticmethod
@@ -42,8 +39,7 @@ class RegisterMonitorInput(Marshalable):
             0: str,
             1: int,
             2: str,
-            3: timedelta,
-            4: str,
+            3: int,
         }
 
     @property
@@ -63,24 +59,16 @@ class RegisterMonitorInput(Marshalable):
         return self._account_number
 
     @property
-    def duration(self) -> timedelta:
+    def duration(self) -> int:
         return self._duration
     
     @duration.setter
-    def duration(self, duration: timedelta) -> None:
+    def duration(self, duration: int) -> None:
         self._duration = duration
 
-    @property
-    def client_ip_address(self) -> str:
-        return self._client_ip_address
-    
-    @name.setter
-    def client_ip_address(self, client_ip_address: str) -> None:
-        self._client_ip_address = client_ip_address
 
     def copy(self, other: RegisterMonitorInput) -> None:
         self._name = other._name
         self._account_number = other._account_number
         self._password = other._password
         self._duration = other._duration
-        self._client_ip_address = other._client_ip_address

@@ -6,5 +6,5 @@ class Monitor:
         self.address = address
         self.expiry = datetime.now() + duration
 
-    def checkExpiry(self):
-        return datetime.now() < self.expiry
+    def check_expired(self):
+        return datetime.now() > self.expiry

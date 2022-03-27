@@ -4,7 +4,7 @@ from typing import List
 import bcrypt
 
 from bank_account import BankAccount
-from monitor import Monitor
+from Monitor import Monitor
 
 database_file = "./bank_accounts.dat"
 
