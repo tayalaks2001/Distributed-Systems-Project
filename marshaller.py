@@ -128,4 +128,5 @@ if __name__ == '__main__':
 	print(Marshaller.marshal_int(1024).hex())
 	print(Marshaller.marshal_float(5.1).hex())
 	print(Marshaller.marshal_object(BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
+	print(compile_message(12, BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
 
