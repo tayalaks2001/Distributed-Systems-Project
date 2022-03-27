@@ -1,6 +1,6 @@
 import uuid
-import bcrypt
 # import random
+import bcrypt
 from datetime import *
 from balance_msg import *
 from error_message import ErrorMessage
@@ -24,10 +24,10 @@ def create_new_account(name: str, password: str, initialBalance: float, currency
     Returns: 
     Account Number assigned to new Account
     """
-    # generate 14-digit account number
+    # generate 6-digit account number
     id = uuid.uuid1()
-    accNum = id.int
-    # accNum = int(random.random() * 10 ** 14) 
+    accNum = id.int % (2 ** 64)
+    # accNum = int(random.random() * 10 ** 6) 
     
     # generate salt and hash password
     salt = bcrypt.gensalt()
@@ -221,7 +221,7 @@ def transfer(name: str, accNum: int, password: str, currencyType: int,transferAm
 
 if __name__ == '__main__':
     # Test create new account
-    # mssg, updateMssg = create_new_account("Aks", "password345", 1500.0, 3)
+    # mssg, updateMssg = create_new_account("Aru", "password234", 500.0, 2)
     # print(mssg)
     # print(updateMssg)
 
@@ -243,12 +243,12 @@ if __name__ == '__main__':
     # print(c.name)
 
     # Test Query Balance
-    balance_mssg, updateMssg = query_balance("Aru", 41923115118426430357812247849916738631, "password234")
-    print(balance_mssg)
-    print("Final values")
-    readFromBinaryDatabase()
-    print(updateMssg)
-    
+    # balance_mssg, updateMssg = query_balance("Aru", 41923115118426430357812247849916738631, "password234")
+    # print(balance_mssg)
+    # print("Final values")
+    # readFromBinaryDatabase()
+    # print(updateMssg)
+
     # Test Transfer
     # mssg, updateMssg = transfer("Aks", 119359646033703075354830142254573726791, "password345", 1, 500, 41923115118426430357812247849916738631)
     # print(mssg)

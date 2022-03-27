@@ -48,8 +48,6 @@ func (m marshaller)marshal_string(string_data string) []byte {
 func printDetails(m marshal_functions) {
     fmt.Println(m.marshal_string("Hello There"))
 	fmt.Println(m.marshal_int(1024))
-	//var a float64 = 1024.1022
-	//fmt.Println(m.marshal_float(1024.1022))
 	fmt.Println(hex.EncodeToString(m.marshal_float(5.1)))
 }
 
