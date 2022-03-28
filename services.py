@@ -6,6 +6,7 @@ from messages.balance_msg import *
 from messages.error_message import ErrorMessage
 from messages.register_monitor_output import *
 from messages.create_new_account_output import *
+from messages.close_account_response import *
 from Monitor import Monitor
 from services_utils import *
 from bank_account import BankAccount 
@@ -43,6 +44,35 @@ def create_new_account(name: str, password: str, initialBalance: float, currency
 
     response = CreateNewAccountOutput(accNum, mssg)
 
+    return response, updateMssg
+
+def close_account(name: str, accNum: str, password: str):
+    """Delete an existing account from the database.
+
+    Keyword arguments:
+    name: Name of Account Holder
+    accNum: Account Number of account to be deleted
+    password: Unhashed password of Account Holder
+
+    Returns: 
+    Message string denoting sucess/appropriate error msg
+    """
+    bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
+    authorized = bankAccount is not None
+    mssg = getAuthorizationMessage(authorized)
+    print(mssg)
+    if not authorized:
+        return ErrorMessage(401, mssg), "Attempted unauthorized access"
+    successStatus = deleteRecord(bankAccountToDelete=bankAccount)
+    if successStatus:
+        mssg = "Account with Account Number: " + str(accNum) +  "successsfully deleted!"
+    else:
+        mssg = "An error has occurred. Please contact the administrator."
+        return ErrorMessage(500, mssg), "Database error"
+    
+    updateMssg = str(name) + " deleted their account with Account Number: " + str(accNum)
+    response = CloseAccountResponse(accNum, mssg)
+    
     return response, updateMssg
 
 def deposit(name: str, accNum: int, password: str, currencyType: int, amount: float) -> T.Tuple[T.Union[BalanceResponse, ErrorMessage], str]:

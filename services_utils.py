@@ -70,5 +70,22 @@ def updateRecord(editedBankAccount: BankAccount) -> bool:
         pickle.dump(bankAccounts, f)
     return True
 
-def updateMonitors(updateMssg: str) -> List[Monitor]:
-    pass
+def deleteRecord(bankAccountToDelete: BankAccount) -> bool:
+    bankAccounts = readFromBinaryDatabase()
+    successStatus = False
+    for i, bankAccount in enumerate(bankAccounts):
+        if bankAccountToDelete.equals(bankAccount):
+            bankAccounts.pop(i)
+            successStatus = True
+            break
+
+    if not successStatus:
+        return False
+
+    with open(database_file, 'wb') as f:
+        pickle.dump(bankAccounts, f)
+
+    return True
+
+# def updateMonitors(updateMssg: str) -> List[Monitor]:
+#     pass

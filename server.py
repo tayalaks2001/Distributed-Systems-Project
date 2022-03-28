@@ -17,11 +17,13 @@ import messages.balance_msg as balance_msg
 import messages.transfer_input as transfer_input
 import messages.register_monitor_input as register_monitor_input
 import messages.create_new_account_input as create_new_account_input
+import messages.close_account_message as close_account_message
 
 # To auto register classes
 import messages.transfer_output
 import messages.register_monitor_output
 import messages.create_new_account_output
+import messages.close_account_response as close_account_response
 
 import services
 
@@ -127,6 +129,14 @@ class _Server(abc.ABC):
             new_acc_msg.password,
             new_acc_msg.initial_balance,
             new_acc_msg.currency_type.value,
+        )
+    
+    @_handle.register
+    def _handle_close_acc(self, close_acc_msg: close_account_message.CloseAccountMessage, addr):
+        return services.close_account(
+            close_acc_msg.name,
+            close_acc_msg.account_number,
+            close_acc_msg.password,
         )
 
 
