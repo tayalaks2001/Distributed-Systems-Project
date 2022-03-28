@@ -3,26 +3,27 @@ from messages.marshalable import Marshalable
 from messages.balance_msg import *
 from messages.dw_msg import *
 from messages.create_new_account_output import * 
+from enum import Enum
 
 class Marshaller:
 
-	@staticmethod
-	def marshal(data, num_bytes = 8):
+	# @staticmethod
+	# def marshal(data, num_bytes = 8):
 		
-		result = bytes()
+	# 	result = bytes()
 
-		# primitive data types
-		if isinstance(data, str):
-			result = Marshaller.marshal_string(data)
-		elif isinstance(data, int):
-			result = Marshaller.marshal_int(data, num_bytes)
-		elif isinstance(data, float):
-			result = Marshaller.marshal_float(data)
-		# user-defined classes
-		else:
-			result = Marshaller.marshal_object(data)
+	# 	# primitive data types
+	# 	if isinstance(data, str):
+	# 		result = Marshaller.marshal_string(data)
+	# 	elif isinstance(data, int):
+	# 		result = Marshaller.marshal_int(data, num_bytes)
+	# 	elif isinstance(data, float):
+	# 		result = Marshaller.marshal_float(data)
+	# 	# user-defined classes
+	# 	else:
+	# 		result = Marshaller.marshal_object(data)
 
-		return result
+	# 	return result
 		
 	
 	@staticmethod
@@ -75,6 +76,22 @@ class Marshaller:
 	
 
 	@staticmethod
+	def marshal_enum(data):
+		
+		if not isinstance(data, Enum):
+			print("Error! marshal_enum called on non-enum value!")
+			raise TypeError
+		
+		result = bytes()
+
+		obj_type = type(data).object_type()
+		result += Marshaller.marshal_int(obj_type, 4)
+		result += Marshaller.marshal_int(data.value, 4)
+
+		return result
+	
+
+	@staticmethod
 	def marshal_object(data):
 		
 		data_class = type(data)
@@ -101,6 +118,8 @@ class Marshaller:
 				result += Marshaller.marshal_float(field_val)
 			elif field_type == str:
 				result += Marshaller.marshal_string(field_val)
+			elif field_type == Enum:
+				result += Marshaller.marshal_enum(field_val)
 
 		return result
 
@@ -134,3 +153,4 @@ if __name__ == '__main__':
 	print(Marshaller.marshal_object(DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)).hex())
 	print(compile_message(16, DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)))
 	print(list(compile_message(20, CreateNewAccountOutput(10853693087894514759, "New account created with account number " + str(10853693087894514759)))))
+	
