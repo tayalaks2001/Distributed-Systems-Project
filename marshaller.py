@@ -1,25 +1,26 @@
 import struct
 from messages.marshalable import Marshalable
+from enum import Enum
 
 class Marshaller:
 
-	@staticmethod
-	def marshal(data, num_bytes = 8):
+	# @staticmethod
+	# def marshal(data, num_bytes = 8):
 		
-		result = bytes()
+	# 	result = bytes()
 
-		# primitive data types
-		if isinstance(data, str):
-			result = Marshaller.marshal_string(data)
-		elif isinstance(data, int):
-			result = Marshaller.marshal_int(data, num_bytes)
-		elif isinstance(data, float):
-			result = Marshaller.marshal_float(data)
-		# user-defined classes
-		else:
-			result = Marshaller.marshal_object(data)
+	# 	# primitive data types
+	# 	if isinstance(data, str):
+	# 		result = Marshaller.marshal_string(data)
+	# 	elif isinstance(data, int):
+	# 		result = Marshaller.marshal_int(data, num_bytes)
+	# 	elif isinstance(data, float):
+	# 		result = Marshaller.marshal_float(data)
+	# 	# user-defined classes
+	# 	else:
+	# 		result = Marshaller.marshal_object(data)
 
-		return result
+	# 	return result
 		
 	
 	@staticmethod
@@ -72,6 +73,22 @@ class Marshaller:
 	
 
 	@staticmethod
+	def marshal_enum(data):
+		
+		if not isinstance(data, Enum):
+			print("Error! marshal_enum called on non-enum value!")
+			raise TypeError
+		
+		result = bytes()
+
+		obj_type = type(data).object_type()
+		result += Marshaller.marshal_int(obj_type, 4)
+		result += Marshaller.marshal_int(data.value, 4)
+
+		return result
+	
+
+	@staticmethod
 	def marshal_object(data):
 		
 		data_class = type(data)
@@ -98,6 +115,8 @@ class Marshaller:
 				result += Marshaller.marshal_float(field_val)
 			elif field_type == str:
 				result += Marshaller.marshal_string(field_val)
+			elif field_type == Enum:
+				result += Marshaller.marshal_enum(field_val)
 
 		return result
 
@@ -121,3 +140,7 @@ def compile_message(message_id: int, object: Marshalable) -> bytes:
 	result = marshalled_message_len + result
 
 	return result
+
+
+if __name__ == "__main__":
+	

@@ -1,4 +1,5 @@
 import struct
+from enum import Enum
 from messages.marshalable import MarshalableRegistry
 
 class Unmarshaller:
@@ -37,6 +38,22 @@ class Unmarshaller:
             raise ValueError
 
         return message.decode('utf-8')
+
+    
+    @staticmethod
+    def unmarshal_enum(message):
+
+        if len(message) != 8:
+            print("Error! unmarshal_enum is called with an incorrect input!")
+            raise ValueError
+        
+        object_id = Unmarshaller.unmarshal_int(message[:4])
+        object_class = MarshalableRegistry.get_registry()[object_id]
+        value = Unmarshaller.unmarshal_int(message[4:8])
+
+        object = object_class(value)
+
+        return object
     
 
     @staticmethod
@@ -63,6 +80,9 @@ class Unmarshaller:
                 field_len = Unmarshaller.unmarshal_int(marshalled_object[index:index+4])
                 field_val = Unmarshaller.unmarshal_string(field_len, marshalled_object[index+4:index+4+field_len])
                 index += 4 + field_len
+            elif field_type == Enum:
+                field_val = Unmarshaller.unmarshal_enum(marshalled_object[index:index+8])
+                index += 8
             else:
                 print("Error! The field does not match any primitive datatype!")
                 raise(TypeError)
