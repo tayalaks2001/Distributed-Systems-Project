@@ -8,11 +8,17 @@ class BalanceResponse(Marshalable):
     msg: str
 
     def get_fields(self):
-        return {1: self.balance, 2: self.msg}
+        return {
+            0: self.balance,
+            1: self.msg
+        }
 
     @staticmethod
     def get_field_types() -> T.Dict[int, type]:
-        return {1: float, 2: str}
+        return {
+            0: float,
+            1: str
+        }
     
     @staticmethod
     def object_type():
@@ -20,7 +26,7 @@ class BalanceResponse(Marshalable):
 
     @staticmethod
     def from_fields(fields: T.Dict[int, T.Any]):
-        return BalanceResponse(fields[1], fields[2])
+        return BalanceResponse(fields[0], fields[1])
 
 @dataclass
 class BalanceMessage(Marshalable):
@@ -31,17 +37,17 @@ class BalanceMessage(Marshalable):
 
     def get_fields(self):
         return {
-            1: self.name,
-            2: self.account_num,
-            3: self.password,
+            0: self.name,
+            1: self.account_num,
+            2: self.password,
         }
 
     @staticmethod
     def get_field_types() -> T.Dict[int, type]:
         return {
-            1: str,
-            2: int,
-            3: str
+            0: str,
+            1: int,
+            2: str
         }
 
     @staticmethod

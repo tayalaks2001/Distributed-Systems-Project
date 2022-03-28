@@ -111,6 +111,7 @@ func generateRegistry(r *Registry) error {
 	r.Put(&RegisterMonitorMessage{})
 	r.Put(&RegisterMonitorOutput{})
 	r.Put(&TransferMessage{})
+	r.Put(CurrencyType(0))
 	return nil
 }
 

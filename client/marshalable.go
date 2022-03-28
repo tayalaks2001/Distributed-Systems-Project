@@ -1,7 +1,5 @@
 //adapted from : https://github.com/AlexsJones/go-type-registry
 
-//Crucial Note: All the maps here have values which are reflect.Type. In order to obtain the type itself and initialize a new var, refer to the following example (syntax may be slightly wrong):
-
 package main
 
 import (
@@ -95,6 +93,8 @@ func getMarshalableObject(unwrapped_val interface{}) Marshalable {
 			object = RegisterMonitorOutput{}
 		case *TransferMessage:
 			object = TransferMessage{}
+		case CurrencyType:
+			object = CurrencyType(0)
 		default: 
 			fmt.Println("No object with specified ID found")
 		}
