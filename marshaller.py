@@ -129,7 +129,6 @@ def compile_message(message_id: int, object: Marshalable) -> bytes:
 	return result
 
 if __name__ == '__main__':
-<<<<<<< HEAD
 	print(Marshaller.marshal_string("Hello There").hex())
 	print(Marshaller.marshal_int(1024).hex())
 	print(Marshaller.marshal_float(5.1).hex())
@@ -141,11 +140,9 @@ if __name__ == '__main__':
 	print(list(Marshaller.marshal_enum(CurrencyType(2))))
 	print(list(compile_message(20, CreateNewAccountInput("Sid", "password", 105.5, CurrencyType(2)))))
 	
-=======
 	ba = BankAccount("aks", 123, "pass")
 	comp_ba = compile_message(1, ba)
 	print(comp_ba)
 
 	uncomp_ba = decompile_message(comp_ba)
 	print(uncomp_ba)
->>>>>>> a98b2351d24273691764256ac4d7144f63806406
