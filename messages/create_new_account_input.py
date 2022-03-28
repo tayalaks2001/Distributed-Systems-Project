@@ -2,6 +2,7 @@ from __future__ import annotations
 from dataclasses import dataclass
 from .marshalable import Marshalable
 from currency_type import CurrencyType
+from enum import Enum
 import typing as T
 
 @dataclass 
@@ -38,7 +39,7 @@ class CreateNewAccountInput(Marshalable):
             0: str,
             1: str,
             2: float,
-            3: int,
+            3: Enum,
         }
 
     @property

@@ -4,27 +4,10 @@ from messages.balance_msg import *
 from messages.dw_msg import *
 from messages.create_new_account_output import * 
 from enum import Enum
+from bank_account import BankAccount
+from unmarshaller import *
 
 class Marshaller:
-
-	# @staticmethod
-	# def marshal(data, num_bytes = 8):
-		
-	# 	result = bytes()
-
-	# 	# primitive data types
-	# 	if isinstance(data, str):
-	# 		result = Marshaller.marshal_string(data)
-	# 	elif isinstance(data, int):
-	# 		result = Marshaller.marshal_int(data, num_bytes)
-	# 	elif isinstance(data, float):
-	# 		result = Marshaller.marshal_float(data)
-	# 	# user-defined classes
-	# 	else:
-	# 		result = Marshaller.marshal_object(data)
-
-	# 	return result
-		
 	
 	@staticmethod
 	def marshal_string(data):
@@ -145,12 +128,9 @@ def compile_message(message_id: int, object: Marshalable) -> bytes:
 	return result
 
 if __name__ == '__main__':
-	print(Marshaller.marshal_string("Hello There").hex())
-	print(Marshaller.marshal_int(1024).hex())
-	print(Marshaller.marshal_float(5.1).hex())
-	# print(Marshaller.marshal_object(BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
-	# print(compile_message(12, BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
-	print(Marshaller.marshal_object(DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)).hex())
-	print(compile_message(16, DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)))
-	print(list(compile_message(20, CreateNewAccountOutput(10853693087894514759, "New account created with account number " + str(10853693087894514759)))))
-	
+	ba = BankAccount("aks", 123, "pass")
+	comp_ba = compile_message(1, ba)
+	print(comp_ba)
+
+	uncomp_ba = decompile_message(comp_ba)
+	print(uncomp_ba)

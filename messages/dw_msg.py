@@ -1,3 +1,6 @@
+from enum import Enum
+
+from currency_type import CurrencyType
 from .marshalable import Marshalable
 from dataclasses import dataclass
 import typing as T
@@ -8,7 +11,7 @@ class DWBaseMessage(Marshalable):
     name: str
     account_num: int
     password: str
-    currency_type: int
+    currency_type: CurrencyType
     amount: float
 
     def get_fields(self):
@@ -26,7 +29,7 @@ class DWBaseMessage(Marshalable):
             0: str,
             1: int,
             2: str,
-            3: int,
+            3: Enum,
             4: float
         }
 
