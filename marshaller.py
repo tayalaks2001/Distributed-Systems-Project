@@ -3,6 +3,7 @@ from messages.marshalable import Marshalable
 from messages.balance_msg import *
 from messages.dw_msg import *
 from messages.create_new_account_output import * 
+from messages.create_new_account_input import *
 from enum import Enum
 
 class Marshaller:
@@ -153,4 +154,6 @@ if __name__ == '__main__':
 	print(Marshaller.marshal_object(DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)).hex())
 	print(compile_message(16, DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)))
 	print(list(compile_message(20, CreateNewAccountOutput(10853693087894514759, "New account created with account number " + str(10853693087894514759)))))
+	print(list(Marshaller.marshal_enum(CurrencyType(2))))
+	print(list(compile_message(20, CreateNewAccountInput("Sid", "password", 105.5, CurrencyType(2)))))
 	

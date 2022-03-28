@@ -12,6 +12,7 @@ type unmarshal_functions interface {
 	unmarshal_uint64(message []byte) uint64
 	unmarshal_uint32(message []byte) uint32
 	unmarshal_float(message []byte) float64
+	unmarshal_enum(message []byte) Marshalable
 	unmarshal_object(message []byte) Marshalable
 }
 
@@ -40,6 +41,11 @@ func (um unmarshaller) unmarshal_float(message []byte) float64 {
 	return math.Float64frombits(uint64_bits)
 }
 
+func (um unmarshaller) unmarshal_enum(message []byte) Marshalable {
+	var value int = int(um.unmarshal_uint32(message[4:8]))
+	return CurrencyType(0).from_fields(map[int]any{0: value})
+}
+
 func (um unmarshaller) unmarshal_object(message []byte) Marshalable {
 
 	var object_id int = int(um.unmarshal_uint32(message[:4]))
@@ -56,6 +62,7 @@ func (um unmarshaller) unmarshal_object(message []byte) Marshalable {
 
 	var marshalled_object []byte = message[4:]
 	var index int = 0
+
 	for index < len(marshalled_object) {
 		var field_id int = int(um.unmarshal_uint32(marshalled_object[index:index + 4]))
 		index += 4
@@ -72,8 +79,9 @@ func (um unmarshaller) unmarshal_object(message []byte) Marshalable {
 			field_val = um.unmarshal_string(field_len, marshalled_object[index+4:index+4+field_len])
 			index += 4 + field_len
 		} else if field_type == reflect.TypeOf(CurrencyType(0)){
-			fmt.Println("Need to implement!")
-		}else {
+			field_val = um.unmarshal_enum(marshalled_object[index:index+8])
+			index += 8
+		} else {
 			fmt.Println("Error! The field does not match any primitive datatype!")
 			return nil
 		}
@@ -90,7 +98,7 @@ func printUnmarshalDetails(um unmarshal_functions) {
 	float64_bytes := []byte{102, 102, 102, 102, 102, 102, 20, 64}
 	// struct_bytes := []byte{90, 2, 0, 0, 2, 0, 0, 0, 71, 172, 16, 173, 91, 16, 160, 150, 3, 0, 0, 0, 11, 0, 0, 0, 112, 97, 115, 115, 119, 111, 114, 100, 49, 50, 51, 1, 0, 0, 0, 3, 0, 0, 0, 83, 105, 100}
 	// compiled_mssg_bytes := []byte{50, 0, 0, 0, 12, 0, 0, 0, 90, 2, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 83, 105, 100, 2, 0, 0, 0, 71, 172, 16, 173, 91, 16, 160, 150, 3, 0, 0, 0, 11, 0, 0, 0, 112, 97, 115, 115, 119, 111, 114, 100, 49, 50, 51}
-	recvd_mssg_bytes := []byte{88, 0, 0, 0, 20, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 71, 172, 16, 173, 91, 16, 160, 150, 1, 0, 0, 0, 60, 0, 0, 0, 78, 101, 119, 32, 97, 99, 99, 111, 117, 110, 116, 32, 99, 114, 101, 97, 116, 101, 100, 32, 119, 105, 116, 104, 32, 97, 99, 99, 111, 117, 110, 116, 32, 110, 117, 109, 98, 101, 114, 32, 49, 48, 56, 53, 51, 54, 57, 51, 48, 56, 55, 56, 57, 52, 53, 49, 52, 55, 53, 57}
+	recvd_mssg_bytes := []byte{59, 0, 0, 0, 20, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 83, 105, 100, 1, 0, 0, 0, 8, 0, 0, 0, 112, 97, 115, 115, 119, 111, 114, 100, 2, 0, 0, 0, 0, 0, 0, 0, 0, 96, 90, 64, 3, 0, 0, 0, 10, 0, 0, 0, 2, 0, 0, 0}
 	fmt.Println(um.unmarshal_uint64(uint64_bytes))
 	fmt.Println(um.unmarshal_float(float64_bytes))
 	var str_len int = int(um.unmarshal_uint32(string_bytes[0:4]))

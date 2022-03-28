@@ -14,6 +14,7 @@ type marshal_functions interface {
 	marshal_uint64(uint64_data uint64) []byte
 	marshal_float(float_data float64) []byte
 	marshal_struct(struct_data Marshalable) []byte
+	marshal_enum(enum_data Marshalable) []byte
 }
 
 type marshaller struct {
@@ -62,7 +63,8 @@ func (m marshaller) marshal_struct(struct_data Marshalable) []byte {
 		case uint64:
 			data = append(data, m.marshal_uint64(field_val.(uint64))...)
 		case CurrencyType: 
-			data = append(data, m.marshal_uint64(field_val.(uint64))...)
+			data = append(data, m.marshal_uint32(uint32(field_val.(CurrencyType).object_type()))...)
+			data = append(data, m.marshal_uint32(field_val.(CurrencyType).getValue())...)
 		case float64:
 			data = append(data, m.marshal_float(field_val.(float64))...)
 		case string:
@@ -71,6 +73,13 @@ func (m marshaller) marshal_struct(struct_data Marshalable) []byte {
 			fmt.Println("An error occurred %v "+v.(string), field_val)
 		}
 	}
+	return data
+}
+
+func (m marshaller) marshal_enum(enum_data Marshalable) []byte {
+	data := make([]byte, 0)
+	data = append(data, m.marshal_uint32(uint32(enum_data.object_type()))...)
+	data = append(data, m.marshal_uint32(enum_data.get_fields()[0].(uint32))...)
 	return data
 }
 
@@ -89,11 +98,13 @@ func printDetails(m marshal_functions) {
 	fmt.Println((m.marshal_uint64(1024)))
 	fmt.Println((m.marshal_float(5.1)))
 	var qMessage Marshalable = QueryBalanceMessage{"Sid", uint64(10853693087894514759), "password123"}
-	var dMessage Marshalable = DepositMessage{DWBaseMessage{"Sid", uint64(10853693087894514759), "password123", CurrencyType(1), 105.5}}
+	var dMessage Marshalable = DepositMessage{DWBaseMessage{"Sid", uint64(10853693087894514759), "password123", SGD, 105.5}}
+	var cMessage Marshalable = CreateBankAccountMessage{"Sid", "password", 105.5, USD}
 	fmt.Println((m.marshal_struct(qMessage)))
 	fmt.Println((hex.EncodeToString(m.marshal_struct(dMessage))))
+	fmt.Println(compile_message(m, 20, cMessage))
 	fmt.Println((hex.EncodeToString(compile_message(m, 12, qMessage))))
-	fmt.Println((hex.EncodeToString(compile_message(m, 16, dMessage))))
+	fmt.Println((compile_message(m, 16, dMessage)))
 }
 
 func generateRegistry(r *Registry) error {
