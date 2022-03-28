@@ -13,21 +13,21 @@ class DWBaseMessage(Marshalable):
 
     def get_fields(self):
         return {
-            1: self.name,
-            2: self.account_num,
-            3: self.password,
-            4: self.currency_type,
-            5: self.amount,
+            0: self.name,
+            1: self.account_num,
+            2: self.password,
+            3: self.currency_type,
+            4: self.amount,
         }
 
     @staticmethod
     def get_field_types() -> T.Dict[int, type]:
         return {
-            1: str,
-            2: int,
-            3: str,
-            4: int,
-            5: float
+            0: str,
+            1: int,
+            2: str,
+            3: int,
+            4: float
         }
 
 class DepositMessage(DWBaseMessage):

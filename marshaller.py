@@ -1,5 +1,8 @@
 import struct
 from messages.marshalable import Marshalable
+from messages.balance_msg import *
+from messages.dw_msg import *
+from messages.create_new_account_output import * 
 from enum import Enum
 
 class Marshaller:
@@ -141,6 +144,13 @@ def compile_message(message_id: int, object: Marshalable) -> bytes:
 
 	return result
 
-
-if __name__ == "__main__":
+if __name__ == '__main__':
+	print(Marshaller.marshal_string("Hello There").hex())
+	print(Marshaller.marshal_int(1024).hex())
+	print(Marshaller.marshal_float(5.1).hex())
+	# print(Marshaller.marshal_object(BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
+	# print(compile_message(12, BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
+	print(Marshaller.marshal_object(DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)).hex())
+	print(compile_message(16, DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)))
+	print(list(compile_message(20, CreateNewAccountOutput(10853693087894514759, "New account created with account number " + str(10853693087894514759)))))
 	
