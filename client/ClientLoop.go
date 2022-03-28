@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"reflect"
 	"time"
 )
 
@@ -38,7 +39,7 @@ func menu() (option int) {
 	return
 }
 
-func getInt() (val int) {
+func getInt() (val uint64) {
 	for {
 		fmt.Print("Please enter an unsigned int:")
 		_, err := fmt.Scanf("%d", &val)
@@ -62,7 +63,7 @@ func getString() (val string) {
 	return
 }
 
-func getFloat() (val float32) {
+func getFloat() (val float64) {
 	for {
 		fmt.Print("Please enter a float:")
 		_, err := fmt.Scanf("%f", &val)
@@ -74,7 +75,7 @@ func getFloat() (val float32) {
 	return
 }
 
-func createMessage(option int) (msg interface{}) {
+func createMessage(option int) (msg Marshalable) {
 
 	switch option {
 	case 1:
@@ -88,7 +89,7 @@ func createMessage(option int) (msg interface{}) {
 			balance := getFloat()
 			fmt.Println("Enter Currency Type")
 			currencyType := getInt()
-			// msg = CreateNewAccountMessage{} blah blah
+			msg = CreateBankAccountMessage{name, password, balance, CurrencyType(currencyType)}
 		}
 	case 2:
 		{
@@ -99,6 +100,7 @@ func createMessage(option int) (msg interface{}) {
 			accNum := getInt()
 			fmt.Println("Enter Password")
 			password := getString()
+			msg = CloseAccountMessage{name, accNum, password}
 		}
 	case 3:
 		{
@@ -113,6 +115,7 @@ func createMessage(option int) (msg interface{}) {
 			currencyType := getInt()
 			fmt.Println("Enter Ammount")
 			ammount := getFloat()
+			msg = DepositMessage{DWBaseMessage{name, accNum, password, CurrencyType(currencyType), ammount}}
 		}
 	case 4:
 		{
@@ -127,6 +130,7 @@ func createMessage(option int) (msg interface{}) {
 			currencyType := getInt()
 			fmt.Println("Enter Ammount")
 			ammount := getFloat()
+			msg = WithdrawMessage{DWBaseMessage{name, accNum, password, CurrencyType(currencyType), ammount}}
 		}
 	case 5:
 		{
@@ -137,6 +141,7 @@ func createMessage(option int) (msg interface{}) {
 			accNum := getInt()
 			fmt.Println("Enter Password")
 			password := getString()
+			msg = QueryBalanceMessage{name, accNum, password}
 		}
 	case 6:
 		{
@@ -153,7 +158,8 @@ func createMessage(option int) (msg interface{}) {
 			ammount := getFloat()
 			fmt.Println("Enter Recepient Account Number")
 			rcvAccNum := getInt()
-		}
+			msg = TransferMessage{name, accNum, password, CurrencyType(currencyType), ammount, rcvAccNum}
+		}	
 
 	case 7:
 		{
@@ -166,6 +172,7 @@ func createMessage(option int) (msg interface{}) {
 			password := getString()
 			fmt.Println("Enter Duration in minutes")
 			duration := getInt()
+			msg = RegisterMonitorMessage{name, accNum, password, duration}
 		}
 	}
 	return msg
@@ -174,6 +181,14 @@ func createMessage(option int) (msg interface{}) {
 func ClientLoop(address string) {
 	var err error
 	c := &client{}
+	m := marshaller{}
+	registry, err := NewRegistry(generateRegistry)
+	if err != nil {
+		fmt.Printf("error: %s\n", err.Error())
+		return
+	}
+	fmt.Println(reflect.TypeOf("a"))
+	um := unmarshaller{registry}
 
 	c.Conn, err = net.Dial("udp", address)
 	if err != nil {
@@ -188,14 +203,17 @@ func ClientLoop(address string) {
 		// menu ...
 		option := menu()
 		msg := createMessage(option)
-		// data = marshalled blah blah
-
+		data = compile_message(m, option, msg)
 		reply, err := c.sendAndRecvMsg(data)
+
 		if err == nil {
 			fmt.Println(string(reply))
 			if option == 7 {
 				// check if response recvd was correct
-				// c.monitor(msg.duration)
+				message_id, response := decompile_message(um, reply)
+				fmt.Println(message_id)
+				fmt.Println(response)
+				c.monitor(int(msg.(RegisterMonitorMessage).durationMinutes))
 			}
 		}
 	}
@@ -242,7 +260,7 @@ func (c *client) sendAndRecvMsg(data []byte) (reply []byte, err error) {
 }
 
 func main() {
-	m := marshaller{}
+	
 	// registry, err := NewRegistry(generateRegistry)
 	// if err != nil {
 	// 	fmt.Printf("error: %s\n", err.Error())
@@ -250,7 +268,7 @@ func main() {
 	// }
 	// fmt.Println(reflect.TypeOf("a"))
 	// um := unmarshaller{registry}
-	printDetails(m)
+	//printDetails(m)
 	// printUnmarshalDetails(um)
 	// var c CurrencyType = CurrencyType(1)
 	// fmt.Println(reflect.TypeOf(c))
