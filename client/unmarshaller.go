@@ -55,31 +55,31 @@ func (um unmarshaller) unmarshal_object(message []byte) Marshalable {
 		return nil
 	}
 	unwrapped_val := value.Unwrap()
-	var object Marshalable = getMarshalableObject(unwrapped_val)//Note that at this stage, object is just a dummy to represent the type
+	var object Marshalable = getMarshalableObject(unwrapped_val) //Note that at this stage, object is just a dummy to represent the type
 
-	var fields_type_map map[int]reflect.Type = object.get_field_types() 
+	var fields_type_map map[int]reflect.Type = object.get_field_types()
 	var fields_map map[int]any = map[int]any{}
 
 	var marshalled_object []byte = message[4:]
 	var index int = 0
 
 	for index < len(marshalled_object) {
-		var field_id int = int(um.unmarshal_uint32(marshalled_object[index:index + 4]))
+		var field_id int = int(um.unmarshal_uint32(marshalled_object[index : index+4]))
 		index += 4
 		var field_type reflect.Type = fields_type_map[field_id]
 		var field_val any = nil
-		if field_type == reflect.TypeOf(uint64(0)){
-			field_val = um.unmarshal_uint64(marshalled_object[index:index+8])
+		if field_type == reflect.TypeOf(uint64(0)) {
+			field_val = um.unmarshal_uint64(marshalled_object[index : index+8])
 			index += 8
 		} else if field_type == reflect.TypeOf(float64(0)) {
-			field_val = um.unmarshal_float(marshalled_object[index:index+8])
+			field_val = um.unmarshal_float(marshalled_object[index : index+8])
 			index += 8
 		} else if field_type == reflect.TypeOf("a") {
-			var field_len int = int(um.unmarshal_uint32(marshalled_object[index:index+4]))
+			var field_len int = int(um.unmarshal_uint32(marshalled_object[index : index+4]))
 			field_val = um.unmarshal_string(field_len, marshalled_object[index+4:index+4+field_len])
 			index += 4 + field_len
-		} else if field_type == reflect.TypeOf(CurrencyType(0)){
-			field_val = um.unmarshal_enum(marshalled_object[index:index+8])
+		} else if field_type == reflect.TypeOf(CurrencyType(0)) {
+			field_val = um.unmarshal_enum(marshalled_object[index : index+8])
 			index += 8
 		} else {
 			fmt.Println("Error! The field does not match any primitive datatype!")
@@ -90,7 +90,6 @@ func (um unmarshaller) unmarshal_object(message []byte) Marshalable {
 	object = object.from_fields(fields_map) //here is where object gets its concrete values
 	return object
 }
-
 
 func printUnmarshalDetails(um unmarshal_functions) {
 	string_bytes := []byte{12, 0, 0, 0, 72, 101, 108, 108, 111, 32, 84, 104, 101, 114, 101, 33}
@@ -116,9 +115,9 @@ func printUnmarshalDetails(um unmarshal_functions) {
 	fmt.Println("Object: ", final_object)
 }
 
-func decompile_message(um unmarshal_functions, message []byte) (int, Marshalable){
+func decompile_message(um unmarshal_functions, message []byte) (int, Marshalable) {
 	var message_len int = int(um.unmarshal_uint32(message[:4]))
-	if len(message) - 4 != message_len{
+	if len(message)-4 != message_len {
 		fmt.Println("Received message length does not match expected length!")
 		return -1, nil
 	}
