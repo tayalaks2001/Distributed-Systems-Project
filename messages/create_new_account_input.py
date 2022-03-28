@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from .marshalable import Marshalable
 from enum import Enum
 from currency_type import CurrencyType
+from enum import Enum
 import typing as T
 
 @dataclass 

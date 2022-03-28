@@ -1,4 +1,7 @@
 from dataclasses import dataclass
+from enum import Enum
+
+from currency_type import CurrencyType
 from .marshalable import Marshalable
 import typing as T
 
@@ -8,7 +11,7 @@ class TransferInput(Marshalable):
     _name: str
     _account_number: int
     _password: str
-    _currency_type: int
+    _currency_type: CurrencyType
     _transfer_amount: float
     _recipient_account_number: int
 
@@ -40,7 +43,7 @@ class TransferInput(Marshalable):
             0: str,
             1: int,
             2: str,
-            3: int,
+            3: Enum,
             4: float,
             5: int,
         }

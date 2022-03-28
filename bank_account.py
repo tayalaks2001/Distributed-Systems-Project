@@ -3,6 +3,7 @@ from dataclasses import dataclass
 from messages.marshalable import Marshalable
 from  currency_type import CurrencyType
 import typing as T
+from enum import Enum
 
 @dataclass 
 class BankAccount(Marshalable):
@@ -40,7 +41,7 @@ class BankAccount(Marshalable):
             0: str,
             1: int,
             2: str,
-            3: int,
+            3: Enum,
             4: float,
         }
 
