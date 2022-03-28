@@ -71,7 +71,9 @@ func (um unmarshaller) unmarshal_object(message []byte) Marshalable {
 			var field_len int = int(um.unmarshal_uint32(marshalled_object[index:index+4]))
 			field_val = um.unmarshal_string(field_len, marshalled_object[index+4:index+4+field_len])
 			index += 4 + field_len
-		} else {
+		} else if field_type == reflect.TypeOf(CurrencyType(0)){
+			fmt.Println("Need to implement!")
+		}else {
 			fmt.Println("Error! The field does not match any primitive datatype!")
 			return nil
 		}
@@ -79,6 +81,31 @@ func (um unmarshaller) unmarshal_object(message []byte) Marshalable {
 	}
 	object = object.from_fields(fields_map) //here is where object gets its concrete values
 	return object
+}
+
+
+func printUnmarshalDetails(um unmarshal_functions) {
+	string_bytes := []byte{12, 0, 0, 0, 72, 101, 108, 108, 111, 32, 84, 104, 101, 114, 101, 33}
+	uint64_bytes := []byte{0, 4, 0, 0, 0, 0, 0, 0}
+	float64_bytes := []byte{102, 102, 102, 102, 102, 102, 20, 64}
+	// struct_bytes := []byte{90, 2, 0, 0, 2, 0, 0, 0, 71, 172, 16, 173, 91, 16, 160, 150, 3, 0, 0, 0, 11, 0, 0, 0, 112, 97, 115, 115, 119, 111, 114, 100, 49, 50, 51, 1, 0, 0, 0, 3, 0, 0, 0, 83, 105, 100}
+	// compiled_mssg_bytes := []byte{50, 0, 0, 0, 12, 0, 0, 0, 90, 2, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 83, 105, 100, 2, 0, 0, 0, 71, 172, 16, 173, 91, 16, 160, 150, 3, 0, 0, 0, 11, 0, 0, 0, 112, 97, 115, 115, 119, 111, 114, 100, 49, 50, 51}
+	recvd_mssg_bytes := []byte{88, 0, 0, 0, 20, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 71, 172, 16, 173, 91, 16, 160, 150, 1, 0, 0, 0, 60, 0, 0, 0, 78, 101, 119, 32, 97, 99, 99, 111, 117, 110, 116, 32, 99, 114, 101, 97, 116, 101, 100, 32, 119, 105, 116, 104, 32, 97, 99, 99, 111, 117, 110, 116, 32, 110, 117, 109, 98, 101, 114, 32, 49, 48, 56, 53, 51, 54, 57, 51, 48, 56, 55, 56, 57, 52, 53, 49, 52, 55, 53, 57}
+	fmt.Println(um.unmarshal_uint64(uint64_bytes))
+	fmt.Println(um.unmarshal_float(float64_bytes))
+	var str_len int = int(um.unmarshal_uint32(string_bytes[0:4]))
+	fmt.Println("String length: ", str_len)
+	fmt.Println(um.unmarshal_string(str_len, string_bytes[4:]))
+	var final_object Marshalable = nil //um.unmarshal_object(struct_bytes)
+	// fmt.Println(final_object)
+	// fmt.Println(reflect.TypeOf(final_object))
+	var message_id int = 0
+	// message_id, final_object = decompile_message(um, compiled_mssg_bytes)
+	// fmt.Println("Message ID: ", message_id)
+	// fmt.Println("Object: ", final_object)
+	message_id, final_object = decompile_message(um, recvd_mssg_bytes)
+	fmt.Println("Message ID: ", message_id)
+	fmt.Println("Object: ", final_object)
 }
 
 func decompile_message(um unmarshal_functions, message []byte) (int, Marshalable){

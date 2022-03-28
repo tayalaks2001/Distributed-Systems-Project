@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"os"
+	"reflect"
 	"time"
 )
 
@@ -88,5 +89,19 @@ func (c *client) sendAndRecvMsg(data []byte) (reply []byte, err error) {
 }
 
 func main() {
+	//m := marshaller{}
+	registry, err := NewRegistry(generateRegistry)
+	if err != nil {
+		fmt.Printf("error: %s\n", err.Error())
+		return
+	}
+	fmt.Println(reflect.TypeOf("a"))
+	um := unmarshaller{registry}
+	//printDetails(m)
+	printUnmarshalDetails(um)
+	// var c CurrencyType = SGD
+	// fmt.Println(c)
+	// fmt.Println(CurrencyType(1))
+	// fmt.Println(reflect.TypeOf(c) == reflect.TypeOf(CurrencyType(1)))
 	ClientLoop("localhost:50000")
 }

@@ -69,8 +69,32 @@ func getMarshalableObject(unwrapped_val interface{}) Marshalable {
 	var object Marshalable = nil
 	switch unwrapped_val.(type) {
 		//The type is a pointer to the foo object
+		case *CloseAccountMessage:
+			object = CloseAccountMessage{}
+		case *CloseAccountResponse:
+			object = CloseAccountResponse{}
+		case *CreateBankAccountMessage:
+			object = CreateBankAccountMessage{}
+		case *CreateBankAccountResponse:
+			object = CreateBankAccountResponse{}
+		case *DepositMessage:
+			object = DepositMessage{}
+		case *WithdrawMessage:
+			object = WithdrawMessage{}
+		case *ErrorMessage:
+			object = ErrorMessage{}
+		case *MonitorResponse:
+			object = MonitorResponse{}
 		case *QueryBalanceMessage:
 			object = QueryBalanceMessage{}
+		case *QueryBalanceResponse:
+			object = QueryBalanceResponse{}
+		case *RegisterMonitorMessage:
+			object = RegisterMonitorMessage{}
+		case *RegisterMonitorOutput:
+			object = RegisterMonitorOutput{}
+		case *TransferMessage:
+			object = TransferMessage{}
 		default: 
 			fmt.Println("No object with specified ID found")
 		}
