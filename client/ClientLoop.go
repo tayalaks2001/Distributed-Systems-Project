@@ -1,71 +1,92 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"io"
 	"net"
+	"os"
 	"time"
 )
 
-func client(ctx context.Context, address string, reader io.Reader) (err error) {
+const TIMEOUT = 5
 
-	raddr, err := net.ResolveUDPAddr("udp", address)
+type client struct {
+	net.Conn
+}
+
+func ClientLoop(address string) {
+	var err error
+	c := &client{}
+
+	c.Conn, err = net.Dial("udp", address)
 	if err != nil {
+		fmt.Println(err.Error())
+		os.Exit(-1)
+	}
+
+	// for {
+
+	// send some stuff
+	// menu ...
+
+	// normal messages
+	msg := []byte("Hello world!")
+	reply, err := c.sendAndRecvMsg(msg)
+	if err == nil {
+		fmt.Println(string(reply))
+	}
+
+	msg = []byte("monitor")
+	reply, err = c.sendAndRecvMsg(msg)
+	if err == nil {
+		fmt.Println(string(reply))
+	}
+
+	c.monitor(1)
+
+	// }
+
+}
+
+func (c *client) monitor(duration int) {
+	endTime := time.Now().Add(time.Minute * time.Duration(duration))
+	replyBuf := make([]byte, 1024)
+	defer c.Conn.SetDeadline(time.Time{})
+	defer fmt.Println("Monitor duration ended")
+
+	for endTime.After(time.Now()) {
+		c.SetReadDeadline(endTime)
+		n, err := c.Conn.Read(replyBuf)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		fmt.Println(string(replyBuf[:n]))
+
+	}
+}
+
+func (c *client) sendAndRecvMsg(data []byte) (reply []byte, err error) {
+	replyBuf := make([]byte, 1024)
+	defer c.Conn.SetDeadline(time.Time{})
+
+	_, err = c.Conn.Write(data)
+	if err != nil {
+		fmt.Println(err.Error())
 		return
 	}
 
-	conn, err := net.DialUDP("udp", nil, raddr)
-	if err != nil {
-		return
+	for {
+		c.Conn.SetDeadline(time.Now().Add(time.Second * TIMEOUT))
+		n, err := c.Conn.Read(replyBuf)
+		if err == nil {
+			reply = replyBuf[:n]
+			break
+		}
+		fmt.Println(err.Error())
 	}
-
-	defer conn.Close()
-
-	doneChan := make(chan error, 1)
-
-	go func() {
-		n, err := io.Copy(conn, reader)
-		if err != nil {
-			doneChan <- err
-			return
-		}
-
-		maxBufferSize := 1024
-		timeout := time.Second
-
-		fmt.Printf("packet-written: bytes=%d\n", n)
-
-		buffer := make([]byte, maxBufferSize)
-
-		// Set a deadline for the ReadOperation so that we don't
-		// wait forever for a server that might not respond on
-		// a resonable amount of time.
-		deadline := time.Now().Add(timeout)
-		err = conn.SetReadDeadline(deadline)
-		if err != nil {
-			doneChan <- err
-			return
-		}
-
-		nRead, addr, err := conn.ReadFrom(buffer)
-		if err != nil {
-			doneChan <- err
-			return
-		}
-
-		fmt.Printf("packet-received: bytes=%d from=%s\n",
-			nRead, addr.String())
-
-		doneChan <- nil
-	}()
-
-	select {
-	case <-ctx.Done():
-		fmt.Println("cancelled")
-		err = ctx.Err()
-	case err = <-doneChan:
-	}
-
 	return
+}
+
+func main() {
+	ClientLoop("localhost:50000")
 }

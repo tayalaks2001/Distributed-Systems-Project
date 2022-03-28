@@ -38,33 +38,37 @@ func (m marshaller) marshal_uint64(uint64_data uint64) []byte {
 
 func (m marshaller) marshal_float(float_data float64) []byte {
 	data := make([]byte, 8)
-	var uint64_float uint64 = math.Float64bits(float_data) 
+	var uint64_float uint64 = math.Float64bits(float_data)
 	binary.LittleEndian.PutUint64(data, uint64_float)
 	return data
 }
 
-func (m marshaller)marshal_string(string_data string) []byte {
+func (m marshaller) marshal_string(string_data string) []byte {
 	var str_len uint32 = uint32(len(string_data))
 	var len_marshalled []byte = m.marshal_uint32(str_len)
 	var str_marshalled []byte = []byte(string_data)
 	return append(len_marshalled, str_marshalled...)
 }
 
-func (m marshaller)marshal_struct(struct_data Marshalable) []byte{
+func (m marshaller) marshal_struct(struct_data Marshalable) []byte {
 	data := make([]byte, 0)
 	var obj_type int = struct_data.object_type()
 	data = append(data, m.marshal_uint32(uint32(obj_type))...)
 	var fields_map map[int]any = struct_data.get_fields()
 	fmt.Println(fields_map)
 	for field_id, field_val := range fields_map {
-		data = append(data, m.marshal_uint32((uint32(field_id)))...)	
-		switch v := field_val.(type){
-			case uint64: data = append(data, m.marshal_uint64(field_val.(uint64))...)
-			case float64: data = append(data, m.marshal_float(field_val.(float64))...)
-			case string: data = append(data, m.marshal_string(field_val.(string))...)
-		default: fmt.Println("An error occurred %v " + v.(string), field_val);
+		data = append(data, m.marshal_uint32((uint32(field_id)))...)
+		switch v := field_val.(type) {
+		case uint64:
+			data = append(data, m.marshal_uint64(field_val.(uint64))...)
+		case float64:
+			data = append(data, m.marshal_float(field_val.(float64))...)
+		case string:
+			data = append(data, m.marshal_string(field_val.(string))...)
+		default:
+			fmt.Println("An error occurred %v "+v.(string), field_val)
 		}
-	} 
+	}
 	return data
 }
 
@@ -79,7 +83,7 @@ func compile_message(m marshal_functions, message_id int, object Marshalable) []
 }
 
 func printDetails(m marshal_functions) {
-    fmt.Println((m.marshal_string("Hello There!")))
+	fmt.Println((m.marshal_string("Hello There!")))
 	fmt.Println((m.marshal_uint64(1024)))
 	fmt.Println((m.marshal_float(5.1)))
 	var qMessage Marshalable = QueryBalanceMessage{"Sid", uint64(10853693087894514759), "password123"}
@@ -111,25 +115,25 @@ func printUnmarshalDetails(um unmarshal_functions) {
 	message_id, final_object = decompile_message(um, compiled_mssg_bytes)
 	fmt.Println("Message ID: ", message_id)
 	fmt.Println("Object: ", final_object)
-} 
-
-func main () {
-	m := marshaller{}
-	registry, err := NewRegistry(generateRegistry)
-	if err != nil {
-		fmt.Printf("error: %s\n", err.Error())
-		return
-	}
-	fmt.Println(reflect.TypeOf("a"))
-	um := unmarshaller{registry}
-	// value, err := registry.Get(602)
-	// if err != nil {
-	// 	fmt.Printf("error: %s\n", err.Error())
-	// 	return
-	// }
-	// i := value.Unwrap()
-	// var object Marshalable = getMarshalableObject(i)	
-	// fmt.Println(object.object_type())
-	printDetails(m)
-	printUnmarshalDetails(um)
 }
+
+// func main () {
+// 	m := marshaller{}
+// 	registry, err := NewRegistry(generateRegistry)
+// 	if err != nil {
+// 		fmt.Printf("error: %s\n", err.Error())
+// 		return
+// 	}
+// 	fmt.Println(reflect.TypeOf("a"))
+// 	um := unmarshaller{registry}
+// 	// value, err := registry.Get(602)
+// 	// if err != nil {
+// 	// 	fmt.Printf("error: %s\n", err.Error())
+// 	// 	return
+// 	// }
+// 	// i := value.Unwrap()
+// 	// var object Marshalable = getMarshalableObject(i)
+// 	// fmt.Println(object.object_type())
+// 	printDetails(m)
+// 	printUnmarshalDetails(um)
+// }

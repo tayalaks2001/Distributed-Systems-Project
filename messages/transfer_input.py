@@ -85,7 +85,7 @@ class TransferInput(Marshalable):
     def recipient_account_number(self, recipient_account_number: int) -> None:
         self._recipient_account_number = recipient_account_number
 
-    def copy(self, other: TransferInput) -> None:
+    def copy(self, other: "TransferInput") -> None:
         self._name = other._name
         self._account_number = other._account_number
         self._password = other._password
