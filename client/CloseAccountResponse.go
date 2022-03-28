@@ -29,3 +29,7 @@ func (car CloseAccountResponse) get_field_types() map[int]reflect.Type {
 func (car CloseAccountResponse) object_type() int {
 	return 8
 }
+
+func (car CloseAccountResponse) extractMssg() string {
+	return car.message
+}

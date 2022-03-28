@@ -29,3 +29,7 @@ func (q QueryBalanceResponse) get_field_types() map[int]reflect.Type {
 func (q QueryBalanceResponse) object_type() int {
 	return 610
 }
+
+func (q QueryBalanceResponse) extractMssg() string {
+	return q.message
+}

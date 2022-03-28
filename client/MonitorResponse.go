@@ -26,3 +26,7 @@ func (mr MonitorResponse) get_field_types() map[int]reflect.Type {
 func (mr MonitorResponse) object_type() int {
 	return 999
 }
+
+func (mr MonitorResponse) extractMssg() string {
+	return mr.message
+}

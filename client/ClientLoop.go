@@ -14,7 +14,7 @@ type client struct {
 	net.Conn
 }
 
-func menu() (option int) {
+func menu() (option uint64) {
 	fmt.Println("Menu:")
 	fmt.Println("1) Create new account")
 	fmt.Println("2) Delete account")
@@ -75,7 +75,7 @@ func getFloat() (val float64) {
 	return
 }
 
-func createMessage(option int) (msg Marshalable) {
+func createMessage(option uint64) (msg Marshalable) {
 
 	switch option {
 	case 1:
@@ -203,7 +203,7 @@ func ClientLoop(address string) {
 		// menu ...
 		option := menu()
 		msg := createMessage(option)
-		data = compile_message(m, option, msg)
+		data = compile_message(m, int(option), msg)
 		reply, err := c.sendAndRecvMsg(data)
 
 		if err == nil {
@@ -211,6 +211,7 @@ func ClientLoop(address string) {
 			if option == 7 {
 				// check if response recvd was correct
 				message_id, response := decompile_message(um, reply)
+				fmt.Println(response.(MessageResponse).extractMssg())
 				fmt.Println(message_id)
 				fmt.Println(response)
 				c.monitor(int(msg.(RegisterMonitorMessage).durationMinutes))

@@ -28,3 +28,7 @@ func (err ErrorMessage) get_field_types() map[int]reflect.Type {
 func (err ErrorMessage) object_type() int {
 	return 7
 }
+
+func (err ErrorMessage) extractMssg() string {
+	return err.message
+}

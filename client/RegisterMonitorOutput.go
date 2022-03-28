@@ -25,3 +25,7 @@ func (rmo RegisterMonitorOutput) get_field_types() map[int]reflect.Type {
 func (rmo RegisterMonitorOutput) object_type() int {
 	return 4
 }
+
+func (rmo RegisterMonitorOutput) extractMssg() string {
+	return rmo.message
+}

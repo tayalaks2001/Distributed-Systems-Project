@@ -29,3 +29,7 @@ func (car CreateBankAccountResponse) get_field_types() map[int]reflect.Type {
 func (car CreateBankAccountResponse) object_type() int {
 	return 2
 }
+
+func (car CreateBankAccountResponse) extractMssg() string {
+	return car.message
+}
