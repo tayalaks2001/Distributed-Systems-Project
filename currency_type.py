@@ -35,7 +35,7 @@ class CurrencyType(Enum):
     
     
 
-def convert(currency_from: CurrencyType, currency_to: CurrencyType, value: float):
+def convert_currency(currency_from: CurrencyType, currency_to: CurrencyType, value: float):
 
     if currency_from == currency_to:
         return value
