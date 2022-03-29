@@ -96,9 +96,9 @@ func createMessage(option uint64) (msg Marshalable) {
 			name := getString()
 			fmt.Println("Enter 11-character Password")
 			var password string = ""
-			// for checkPasswordLength(password) {
+			for checkPasswordLength(password) {
 				password = getString()
-			//}
+			}
 			fmt.Println("Enter Initial Balance")
 			balance := getFloat()
 			fmt.Println("Enter Currency Type")
@@ -115,9 +115,9 @@ func createMessage(option uint64) (msg Marshalable) {
 			accNum := getInt()
 			fmt.Println("Enter 11-character Password")
 			var password string = ""
-			// for checkPasswordLength(password) {
+			for checkPasswordLength(password) {
 				password = getString()
-			//}
+			}
 			msg = CloseAccountMessage{name, accNum, password}
 		}
 	case 3:
@@ -129,9 +129,9 @@ func createMessage(option uint64) (msg Marshalable) {
 			accNum := getInt()
 			fmt.Println("Enter 11-character Password")
 			var password string = ""
-			// for checkPasswordLength(password) {
+			for checkPasswordLength(password) {
 				password = getString()
-			//}
+			}
 			fmt.Println("Enter Currency Type")
 			printCurrencyTypeOptions()
 			currencyType := getInt()
@@ -148,9 +148,9 @@ func createMessage(option uint64) (msg Marshalable) {
 			accNum := getInt()
 			fmt.Println("Enter 11-character Password")
 			var password string = ""
-			// for checkPasswordLength(password) {
+			for checkPasswordLength(password) {
 				password = getString()
-			//}
+			}
 			fmt.Println("Enter Currency Type")
 			printCurrencyTypeOptions()
 			currencyType := getInt()
@@ -167,9 +167,9 @@ func createMessage(option uint64) (msg Marshalable) {
 			accNum := getInt()
 			fmt.Println("Enter 11-character Password")
 			var password string = ""
-			// for checkPasswordLength(password) {
+			for checkPasswordLength(password) {
 				password = getString()
-			//}
+			}
 			msg = QueryBalanceMessage{name, accNum, password}
 		}
 	case 6:
@@ -181,9 +181,9 @@ func createMessage(option uint64) (msg Marshalable) {
 			accNum := getInt()
 			fmt.Println("Enter 11-character Password")
 			var password string = ""
-			// for checkPasswordLength(password) {
+			for checkPasswordLength(password) {
 				password = getString()
-			//}
+			}
 			fmt.Println("Enter Currency Type")
 			printCurrencyTypeOptions()
 			currencyType := getInt()
@@ -203,9 +203,9 @@ func createMessage(option uint64) (msg Marshalable) {
 			accNum := getInt()
 			fmt.Println("Enter 11-character Password")
 			var password string = ""
-			// for checkPasswordLength(password) {
+			for checkPasswordLength(password) {
 				password = getString()
-			//}
+			}
 			fmt.Println("Enter Duration in minutes")
 			duration := getInt()
 			msg = RegisterMonitorMessage{name, accNum, password, duration}
@@ -257,12 +257,12 @@ func ClientLoop(address string) {
 		fmt.Println(response.(MessageResponse).extractMssg())
 		if option == 7 {
 			// check if response recvd was correct
-			c.monitor(int(msg.(RegisterMonitorMessage).durationMinutes))
+			c.monitor(um, int(msg.(RegisterMonitorMessage).durationMinutes))
 		}
 	}
 }
 
-func (c *client) monitor(duration int) {
+func (c *client) monitor(um unmarshal_functions, duration int) {
 	endTime := time.Now().Add(time.Minute * time.Duration(duration))
 	replyBuf := make([]byte, 1024)
 	defer c.Conn.SetDeadline(time.Time{})
@@ -275,8 +275,10 @@ func (c *client) monitor(duration int) {
 			fmt.Println(err.Error())
 			return
 		}
+		recvd_message_id, response := decompile_message(um, replyBuf[:n])
+		fmt.Println(recvd_message_id)
+		fmt.Println(response.(MessageResponse).extractMssg())
 		fmt.Println(string(replyBuf[:n]))
-
 	}
 }
 
