@@ -1,6 +1,7 @@
 import struct
 from enum import Enum
 from messages.marshalable import MarshalableRegistry
+from currency_type import CurrencyType
 
 class Unmarshaller:
 
@@ -48,7 +49,8 @@ class Unmarshaller:
             raise ValueError
         
         object_id = Unmarshaller.unmarshal_int(message[:4])
-        object_class = MarshalableRegistry.get_registry()[object_id]
+        # object_class = MarshalableRegistry.get_registry()[object_id]
+        object_class = CurrencyType     # All enums unmarshalled as CurrencyType
         value = Unmarshaller.unmarshal_int(message[4:8])
 
         object = object_class(value)
