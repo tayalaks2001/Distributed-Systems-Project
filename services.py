@@ -10,6 +10,7 @@ from messages.close_account_response import *
 from Monitor import Monitor
 from services_utils import *
 from bank_account import BankAccount 
+from currency_type import *
 
 
 def create_new_account(name: str, password: str, initialBalance: float, currencyType: int = 1) -> T.Tuple[T.Union[CreateNewAccountOutput, ErrorMessage], str]:
@@ -95,7 +96,9 @@ def deposit(name: str, accNum: int, password: str, currencyType: int, amount: fl
     print(mssg)
     if not authorized:
         return ErrorMessage(401, mssg), "Attempted unauthorized access"
-    bankAccount.accBalance += amount
+    
+    convertedAmount =  convert_currency(CurrencyType(currencyType), bankAccount.currencyType, amount)
+    bankAccount.accBalance += convertedAmount
     successStatus = updateRecord(editedBankAccount=bankAccount)
     if successStatus:
         mssg = "Successfully deposited! New Balance " + str (bankAccount.accBalance)
@@ -103,7 +106,7 @@ def deposit(name: str, accNum: int, password: str, currencyType: int, amount: fl
         mssg = "An error has occurred. Please contact the administrator."
         return ErrorMessage(500, mssg), "Database error"
     
-    updateMssg = str(bankAccount.name) + " desposited " + str(amount) + " into their account with Account Number: " + str(accNum)
+    updateMssg = str(bankAccount.name) + " desposited " + str(amount) + " " + str(CurrencyType(currencyType).name) + " into their account with Account Number: " + str(accNum)
 
     response = BalanceResponse(bankAccount.accBalance, mssg)
 
@@ -130,8 +133,9 @@ def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: f
     if not authorized:
         return ErrorMessage(401, mssg), "Attempted unauthorized access"
     
-    if (bankAccount.accBalance >= amount):
-        bankAccount.accBalance -= amount
+    convertedAmount = convert_currency(CurrencyType(currencyType), bankAccount.currencyType, amount)
+    if (bankAccount.accBalance >= convertedAmount):
+        bankAccount.accBalance -= convertedAmount
         successStatus = updateRecord(editedBankAccount=bankAccount)
         if successStatus:
             mssg = "Successfully withdrawn! New Balance " + str (bankAccount.accBalance)
@@ -142,7 +146,7 @@ def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: f
         mssg = "Insufficient balance in account"
         return ErrorMessage(400, mssg), "Attempted withdraw without sufficient balance by " + str(bankAccount.name)
     
-    updateMssg = str(bankAccount.name) + " withdrew " + str(amount) + " from their account with Account Number: " + str(accNum)
+    updateMssg = str(bankAccount.name) + " withdrew " + str(amount) + " " + str(CurrencyType(currencyType).name) + " from their account with Account Number: " + str(accNum)
 
     response = BalanceResponse(bankAccount.accBalance, mssg)
 
@@ -204,7 +208,7 @@ def query_balance(name: str, accNum: int, password: str) -> T.Tuple[T.Union[Bala
 
     return response, updateMssg
 
-def transfer(name: str, accNum: int, password: str, currencyType: int,transferAmount: float, recipientAccNum: int) -> T.Union[T.Tuple[BalanceResponse, str], str]:
+def transfer(name: str, accNum: int, password: str, currencyType: int, transferAmount: float, recipientAccNum: int) -> T.Union[T.Tuple[BalanceResponse, str], str]:
     """Transfer amount from one account to another.
 
     Keyword arguments:
@@ -224,15 +228,17 @@ def transfer(name: str, accNum: int, password: str, currencyType: int,transferAm
     if not authorized:
         return ErrorMessage(401, mssg), "Attempted unauthorized access"
 
-    if (bankAccount.accBalance < transferAmount):
+    convertedTransferAmountSender = convert_currency(CurrencyType(currencyType), bankAccount.currencyType, transferAmount)
+    if (bankAccount.accBalance < convertedTransferAmountSender):
         return ErrorMessage(400, "Insufficient Balance in account"), "Attempted transfer without sufficient balance by " + str(bankAccount.name)
 
     recipientBankAccount = getBankAccByAccNum(recipientAccNum)
+    convertedTransferAmountRecipient = convert_currency(CurrencyType(currencyType), recipientBankAccount.currencyType, transferAmount)
     if recipientBankAccount is None:
         return ErrorMessage(400, "Recipient bank account number provided is incorrect."), "Attempted transfer with incorrect recipient account number by " + str(bankAccount.name)
     
-    bankAccount.accBalance -= transferAmount
-    recipientBankAccount.accBalance += transferAmount
+    bankAccount.accBalance -= convertedTransferAmountSender
+    recipientBankAccount.accBalance += convertedTransferAmountRecipient
     successStatus1 = updateRecord(editedBankAccount=bankAccount)
     successStatus2 = updateRecord(editedBankAccount=recipientBankAccount)
 
@@ -244,7 +250,7 @@ def transfer(name: str, accNum: int, password: str, currencyType: int,transferAm
 
     response = BalanceResponse(bankAccount.accBalance, mssg)
 
-    updateMssg = str(bankAccount.name) + " transferred " + str(transferAmount) + " from their account with Account Number: " + str(accNum) + " to account number " + str(recipientAccNum)
+    updateMssg = str(bankAccount.name) + " transferred " + str(transferAmount) + " " + str(CurrencyType(currencyType).name) + " from their account with Account Number: " + str(accNum) + " to account number " + str(recipientAccNum)
 
     return response, updateMssg
 
