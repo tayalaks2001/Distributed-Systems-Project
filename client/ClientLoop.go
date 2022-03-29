@@ -275,7 +275,7 @@ func (c *client) monitor(um unmarshal_functions, duration int) {
 			fmt.Println(err.Error())
 			return
 		}
-		recvd_message_id, response := decompile_message(um, replyBuf[:n])
+		recvd_message_id, response := decompile_message(um, replyBuf)
 		fmt.Println(recvd_message_id)
 		fmt.Println(response.(MessageResponse).extractMssg())
 		fmt.Println(string(replyBuf[:n]))
