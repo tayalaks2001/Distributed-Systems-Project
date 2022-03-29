@@ -2,7 +2,7 @@ import abc
 from Monitor import Monitor
 from marshaller import compile_message
 import socket
-import enum
+import random
 from unmarshaller import decompile_message
 from functools import singledispatchmethod
 from collections import defaultdict
@@ -30,14 +30,20 @@ import services
 
 class _Server(abc.ABC):
 
-    def __init__(self, addr, port) -> None:
+    def __init__(self, addr, port, success_prob=1.0) -> None:
         self.socket = socket.socket(family=socket.AF_INET, type=socket.SOCK_DGRAM)
         self.socket.bind((addr, port))
         self.monitors: T.List[Monitor] = []
+        self.success_prob = success_prob
 
     def server_loop(self):
         while True:
             msg, address = self.socket.recvfrom(1024)
+
+            if random.random() > self.success_prob:
+                print(f"Dropping request...")
+                continue
+
             msg_id, obj = decompile_message(msg)
             print(obj)
             try:
@@ -47,8 +53,11 @@ class _Server(abc.ABC):
                 print(e)
 
     def send(self, msg, addr):
-        self.socket.sendto(msg, addr)
         print(f"Sent {msg=} to {addr=}")
+        if random.random() > self.success_prob:
+            print(f"Dropping response...")
+            return
+        self.socket.sendto(msg, addr)
 
     @abc.abstractmethod
     def handle(self, msg_id, obj, address):
@@ -142,8 +151,8 @@ class _Server(abc.ABC):
 
 
 class AtmostOnceServer(_Server):
-    def __init__(self, addr, port) -> None:
-        super().__init__(addr, port)
+    def __init__(self, addr, port, success_prob) -> None:
+        super().__init__(addr, port, success_prob=success_prob)
         self._recvd_dict: T.Dict[
             T.Tuple[str, int], T.Dict[int, Marshalable]
         ] = defaultdict(dict)

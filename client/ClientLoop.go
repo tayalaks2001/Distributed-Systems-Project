@@ -283,17 +283,16 @@ func (c *client) monitor(um unmarshal_functions, duration int) {
 }
 
 func (c *client) sendAndRecvMsg(data []byte) (reply []byte, err error) {
-	replyBuf := make([]byte, 1024)
-	defer c.Conn.SetDeadline(time.Time{})
 
-	_, err = c.Conn.Write(data)
-	if err != nil {
-		fmt.Println(err.Error())
-		return
-	}
-
+	defer c.Conn.SetReadDeadline(time.Time{})
 	for {
-		c.Conn.SetDeadline(time.Now().Add(time.Second * TIMEOUT))
+		replyBuf := make([]byte, 1024)
+		_, err = c.Conn.Write(data)
+		if err != nil {
+			fmt.Println(err.Error())
+			return
+		}
+		c.Conn.SetReadDeadline(time.Now().Add(time.Second * TIMEOUT))
 		n, err := c.Conn.Read(replyBuf)
 		if err == nil {
 			reply = replyBuf[:n]
