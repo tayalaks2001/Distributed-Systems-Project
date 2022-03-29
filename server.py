@@ -39,6 +39,7 @@ class _Server(abc.ABC):
         while True:
             msg, address = self.socket.recvfrom(1024)
             msg_id, obj = decompile_message(msg)
+            print(obj)
             try:
                 self.handle(msg_id, obj, address)
 

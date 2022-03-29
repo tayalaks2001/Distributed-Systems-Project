@@ -66,7 +66,7 @@ def close_account(name: str, accNum: str, password: str):
         return ErrorMessage(401, mssg), "Attempted unauthorized access"
     successStatus = deleteRecord(bankAccountToDelete=bankAccount)
     if successStatus:
-        mssg = "Account with Account Number: " + str(accNum) +  "successsfully deleted!"
+        mssg = "Account with Account Number: " + str(accNum) +  " successsfully deleted!"
     else:
         mssg = "An error has occurred. Please contact the administrator."
         return ErrorMessage(500, mssg), "Database error"

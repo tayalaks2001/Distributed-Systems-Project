@@ -76,6 +76,12 @@ func getFloat() (val float64) {
 	return
 }
 
+func printCurrencyTypeOptions() {
+	fmt.Println("SGD: 0")
+	fmt.Println("USD: 1")
+	fmt.Println("INR: 2")
+}
+
 func createMessage(option uint64) (msg Marshalable) {
 
 	switch option {
@@ -89,6 +95,7 @@ func createMessage(option uint64) (msg Marshalable) {
 			fmt.Println("Enter Initial Balance")
 			balance := getFloat()
 			fmt.Println("Enter Currency Type")
+			printCurrencyTypeOptions()
 			currencyType := getInt()
 			msg = CreateBankAccountMessage{name, password, balance, CurrencyType(currencyType)}
 		}
@@ -113,6 +120,7 @@ func createMessage(option uint64) (msg Marshalable) {
 			fmt.Println("Enter Password")
 			password := getString()
 			fmt.Println("Enter Currency Type")
+			printCurrencyTypeOptions()
 			currencyType := getInt()
 			fmt.Println("Enter Ammount")
 			ammount := getFloat()
@@ -128,6 +136,7 @@ func createMessage(option uint64) (msg Marshalable) {
 			fmt.Println("Enter Password")
 			password := getString()
 			fmt.Println("Enter Currency Type")
+			printCurrencyTypeOptions()
 			currencyType := getInt()
 			fmt.Println("Enter Ammount")
 			ammount := getFloat()
@@ -154,6 +163,7 @@ func createMessage(option uint64) (msg Marshalable) {
 			fmt.Println("Enter Password")
 			password := getString()
 			fmt.Println("Enter Currency Type")
+			printCurrencyTypeOptions()
 			currencyType := getInt()
 			fmt.Println("Enter Ammount")
 			ammount := getFloat()

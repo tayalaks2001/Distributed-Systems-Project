@@ -37,7 +37,7 @@ class DepositMessage(DWBaseMessage):
 
     @staticmethod
     def from_fields(fields: T.Dict[int, T.Any]):
-        return DepositMessage(fields[1], fields[2], fields[3], fields[4], fields[5])
+        return DepositMessage(fields[0], fields[1], fields[2], fields[3], fields[4])
 
     @staticmethod
     def object_type():
@@ -46,7 +46,7 @@ class DepositMessage(DWBaseMessage):
 class WithdrawMessage(DWBaseMessage):
     @staticmethod
     def from_fields(fields: T.Dict[int, T.Any]):
-        return WithdrawMessage(fields[1], fields[2], fields[3], fields[4], fields[5])
+        return WithdrawMessage(fields[0], fields[1], fields[2], fields[3], fields[4])
 
     @staticmethod
     def object_type():
