@@ -9,6 +9,7 @@ import (
 )
 
 const TIMEOUT = 5
+var message_id int = 0
 
 type client struct {
 	net.Conn
@@ -180,6 +181,7 @@ func createMessage(option uint64) (msg Marshalable) {
 
 func ClientLoop(address string) {
 	var err error
+	var reply []byte
 	c := &client{}
 	m := marshaller{}
 	registry, err := NewRegistry(generateRegistry)
@@ -195,27 +197,32 @@ func ClientLoop(address string) {
 		fmt.Println(err.Error())
 		os.Exit(-1)
 	}
+	
+	
 
 	for {
-
+		
 		var data []byte
 		// send some stuff
 		// menu ...
 		option := menu()
 		msg := createMessage(option)
-		data = compile_message(m, int(option), msg)
-		reply, err := c.sendAndRecvMsg(data)
+		data = compile_message(m, message_id, msg)
 
-		if err == nil {
-			fmt.Println(string(reply))
-			if option == 7 {
-				// check if response recvd was correct
-				message_id, response := decompile_message(um, reply)
-				fmt.Println(response.(MessageResponse).extractMssg())
-				fmt.Println(message_id)
-				fmt.Println(response)
-				c.monitor(int(msg.(RegisterMonitorMessage).durationMinutes))
+		var recvd_message_id int = -100
+		var response Marshalable = nil
+		for message_id != recvd_message_id {
+			reply, err = c.sendAndRecvMsg(data)
+			if err == nil {
+				fmt.Println("Raw reply: " + string(reply))
+				recvd_message_id, response = decompile_message(um, reply)
 			}
+		} 	
+		message_id += 1
+		fmt.Println(response.(MessageResponse).extractMssg())
+		if option == 7 {
+			// check if response recvd was correct
+			c.monitor(int(msg.(RegisterMonitorMessage).durationMinutes))
 		}
 	}
 }
@@ -273,5 +280,5 @@ func main() {
 	// printUnmarshalDetails(um)
 	// var c CurrencyType = CurrencyType(1)
 	// fmt.Println(reflect.TypeOf(c))
-	ClientLoop("localhost:50000")
+	ClientLoop("127.0.0.1:2222")
 }

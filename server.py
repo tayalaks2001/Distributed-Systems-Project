@@ -154,6 +154,9 @@ class AtmostOnceServer(_Server):
             return
 
         response, update_message = self._handle(obj, address)
+        print(msg_id)
+        print(response)
+        print(update_message)
         self._recvd_dict[address][msg_id] = response
         self.send(compile_message(msg_id, response), address)
         self._send_update_message(update_message)

@@ -52,7 +52,7 @@ class BalanceMessage(Marshalable):
 
     @staticmethod
     def from_fields(fields: T.Dict[int, T.Any]):
-        return BalanceMessage(fields[1], fields[2], fields[3])
+        return BalanceMessage(fields[0], fields[1], fields[2])
 
     @staticmethod
     def object_type():

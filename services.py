@@ -272,7 +272,7 @@ if __name__ == '__main__':
     # print(c.name)
 
     # Test Query Balance
-    # balance_mssg, updateMssg = query_balance("Aru", 41923115118426430357812247849916738631, "password234")
+    # balance_mssg, updateMssg = query_balance("Aru", 11078591594286328903, "password234")
     # print(balance_mssg)
     # print("Final values")
     # readFromBinaryDatabase()
