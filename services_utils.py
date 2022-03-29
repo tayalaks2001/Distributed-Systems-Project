@@ -32,6 +32,8 @@ def readFromBinaryDatabase() -> List[BankAccount]:
 
 def checkIDAndPassword(name: str, accNum: int, password: str) -> BankAccount:
      print("In check pwd")
+     if len(password) != 11:
+         return None
      bankAccounts = readFromBinaryDatabase()
      for bankAccount in bankAccounts:
          if bankAccount._name == name and bankAccount._accNum == accNum:

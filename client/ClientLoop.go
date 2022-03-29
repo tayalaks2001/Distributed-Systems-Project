@@ -82,6 +82,10 @@ func printCurrencyTypeOptions() {
 	fmt.Println("INR: 2")
 }
 
+func checkPasswordLength(password string) bool{
+	return len(password) != 11
+}
+
 func createMessage(option uint64) (msg Marshalable) {
 
 	switch option {
@@ -90,8 +94,11 @@ func createMessage(option uint64) (msg Marshalable) {
 			fmt.Println("Creating new account...")
 			fmt.Println("Enter Name")
 			name := getString()
-			fmt.Println("Enter Password")
-			password := getString()
+			fmt.Println("Enter 11-character Password")
+			var password string = ""
+			// for checkPasswordLength(password) {
+				password = getString()
+			//}
 			fmt.Println("Enter Initial Balance")
 			balance := getFloat()
 			fmt.Println("Enter Currency Type")
@@ -106,8 +113,11 @@ func createMessage(option uint64) (msg Marshalable) {
 			name := getString()
 			fmt.Println("Enter Account Number")
 			accNum := getInt()
-			fmt.Println("Enter Password")
-			password := getString()
+			fmt.Println("Enter 11-character Password")
+			var password string = ""
+			// for checkPasswordLength(password) {
+				password = getString()
+			//}
 			msg = CloseAccountMessage{name, accNum, password}
 		}
 	case 3:
@@ -117,8 +127,11 @@ func createMessage(option uint64) (msg Marshalable) {
 			name := getString()
 			fmt.Println("Enter Account Number")
 			accNum := getInt()
-			fmt.Println("Enter Password")
-			password := getString()
+			fmt.Println("Enter 11-character Password")
+			var password string = ""
+			// for checkPasswordLength(password) {
+				password = getString()
+			//}
 			fmt.Println("Enter Currency Type")
 			printCurrencyTypeOptions()
 			currencyType := getInt()
@@ -133,8 +146,11 @@ func createMessage(option uint64) (msg Marshalable) {
 			name := getString()
 			fmt.Println("Enter Account Number")
 			accNum := getInt()
-			fmt.Println("Enter Password")
-			password := getString()
+			fmt.Println("Enter 11-character Password")
+			var password string = ""
+			// for checkPasswordLength(password) {
+				password = getString()
+			//}
 			fmt.Println("Enter Currency Type")
 			printCurrencyTypeOptions()
 			currencyType := getInt()
@@ -149,8 +165,11 @@ func createMessage(option uint64) (msg Marshalable) {
 			name := getString()
 			fmt.Println("Enter Account Number")
 			accNum := getInt()
-			fmt.Println("Enter Password")
-			password := getString()
+			fmt.Println("Enter 11-character Password")
+			var password string = ""
+			// for checkPasswordLength(password) {
+				password = getString()
+			//}
 			msg = QueryBalanceMessage{name, accNum, password}
 		}
 	case 6:
@@ -160,8 +179,11 @@ func createMessage(option uint64) (msg Marshalable) {
 			name := getString()
 			fmt.Println("Enter your Account Number")
 			accNum := getInt()
-			fmt.Println("Enter Password")
-			password := getString()
+			fmt.Println("Enter 11-character Password")
+			var password string = ""
+			// for checkPasswordLength(password) {
+				password = getString()
+			//}
 			fmt.Println("Enter Currency Type")
 			printCurrencyTypeOptions()
 			currencyType := getInt()
@@ -179,8 +201,11 @@ func createMessage(option uint64) (msg Marshalable) {
 			name := getString()
 			fmt.Println("Enter Account Number")
 			accNum := getInt()
-			fmt.Println("Enter Password")
-			password := getString()
+			fmt.Println("Enter 11-character Password")
+			var password string = ""
+			// for checkPasswordLength(password) {
+				password = getString()
+			//}
 			fmt.Println("Enter Duration in minutes")
 			duration := getInt()
 			msg = RegisterMonitorMessage{name, accNum, password, duration}

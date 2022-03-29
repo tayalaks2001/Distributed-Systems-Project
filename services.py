@@ -32,6 +32,8 @@ def create_new_account(name: str, password: str, initialBalance: float, currency
     
     # generate salt and hash password
     salt = bcrypt.gensalt()
+    if len(password) != 11:
+        return ErrorMessage(400, "Password length is incorrect; must be 11 characters"), "Account creation with wrong password length"
     passwordHash = bcrypt.hashpw(password.encode('utf8'), salt)
 
     # create new bank account object
