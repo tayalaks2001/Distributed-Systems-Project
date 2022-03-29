@@ -10,7 +10,7 @@ from server import AtleastOnceServer, AtmostOnceServer
 def start_server(atleast_once, success_prob, port):
     """Simple program that greets NAME for a total of COUNT times."""
     if atleast_once:
-        print("Starting Atleast once server on port {port}")
+        print(f"Starting Atleast once server on port {port}")
         s = AtleastOnceServer("0.0.0.0", port, success_prob=success_prob)
     else:
         print(f"Starting Atmost once server on port {port}")
