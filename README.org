@@ -30,11 +30,11 @@ Remaining changes:
 1. Lossy netowrk in server:
   i. on receipt
   ii. on reply
-2. Client main loop menu
-3. Client menu retransmission on timeout
-4. Implement marshalable functions for all messages in client
-5. Close bank account service
-6. Incorporate currency type
+2. Client main loop menu - Done
+3. Client menu retransmission on timeout - Done
+4. Implement marshalable functions for all messages in client - Done
+5. Close bank account service - Done
+6. Incorporate currency type - Done
 7. Experiments on at-least-once and at-most-once
-8. Marshalling of enums
-9. Fixed length password
+8. Marshalling of enums - Done
+9. Fixed length password - Done
