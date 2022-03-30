@@ -127,7 +127,7 @@ class _Server(abc.ABC):
             monitor_msg.duration,
             addr,
         )
-        self.monitors.append(monitor)
+        if monitor is not None: self.monitors.append(monitor)
         return response, update_msg
 
     @_handle.register

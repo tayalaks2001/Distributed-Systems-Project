@@ -256,7 +256,7 @@ func ClientLoop(address string) {
 		message_id += 1
 		fmt.Println("Message from Server:")
 		fmt.Println(response.(MessageResponse).extractMssg())
-		if option == 7 {
+		if option == 7 && response.object_type() != 7 {
 			// check if response recvd was correct
 			c.monitor(um, int(msg.(RegisterMonitorMessage).durationMinutes))
 		}
@@ -276,10 +276,9 @@ func (c *client) monitor(um unmarshal_functions, duration int) {
 			fmt.Println(err.Error())
 			return
 		}
-		recvd_message_id, response := decompile_message(um, replyBuf)
+		recvd_message_id, response := decompile_message(um, replyBuf[:n])
 		fmt.Println(recvd_message_id)
 		fmt.Println(response.(MessageResponse).extractMssg())
-		fmt.Println(string(replyBuf[:n]))
 	}
 }
 
@@ -316,5 +315,5 @@ func main() {
 	// printUnmarshalDetails(um)
 	// var c CurrencyType = CurrencyType(1)
 	// fmt.Println(reflect.TypeOf(c))
-	ClientLoop("192.168.131.109:2222")
+	ClientLoop("localhost:2222")
 }
