@@ -249,11 +249,12 @@ func ClientLoop(address string) {
 		for message_id != recvd_message_id {
 			reply, err = c.sendAndRecvMsg(data)
 			if err == nil {
-				fmt.Println("Raw reply: " + string(reply))
+				// fmt.Println("Raw reply: " + string(reply))
 				recvd_message_id, response = decompile_message(um, reply)
 			}
 		} 	
 		message_id += 1
+		fmt.Println("Message from Server:")
 		fmt.Println(response.(MessageResponse).extractMssg())
 		if option == 7 {
 			// check if response recvd was correct
@@ -306,8 +307,7 @@ func (c *client) sendAndRecvMsg(data []byte) (reply []byte, err error) {
 func main() {
 	
 	// registry, err := NewRegistry(generateRegistry)
-	// if err != nil {
-	// 	fmt.Printf("error: %s\n", err.Error())
+	// if err != nil {	// 	fmt.Printf("error: %s\n", err.Error())
 	// 	return
 	// }
 	// fmt.Println(reflect.TypeOf("a"))
@@ -316,5 +316,5 @@ func main() {
 	// printUnmarshalDetails(um)
 	// var c CurrencyType = CurrencyType(1)
 	// fmt.Println(reflect.TypeOf(c))
-	ClientLoop("127.0.0.1:2222")
+	ClientLoop("192.168.131.109:2222")
 }
