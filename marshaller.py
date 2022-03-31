@@ -92,7 +92,7 @@ class Marshaller:
 		data: value to be marshalled
 
 		Returns: 
-		Marshalled float output/type error if data is not an enum object.
+		Marshalled enum output/type error if data is not an enum object.
 		"""
 
 		if not isinstance(data, Enum):

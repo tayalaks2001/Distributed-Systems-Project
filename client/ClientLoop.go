@@ -11,10 +11,12 @@ import (
 const TIMEOUT = 5
 var message_id int = 0
 
+// Client struct to encapsulate network connection
 type client struct {
 	net.Conn
 }
 
+// Function to display the main menu
 func menu() (option uint64) {
 	fmt.Println("Menu:")
 	fmt.Println("1) Create new account")
@@ -40,6 +42,7 @@ func menu() (option uint64) {
 	return
 }
 
+// Function to retrieve an integer from command line input
 func getInt() (val uint64) {
 	for {
 		fmt.Print("Please enter an unsigned int:")
@@ -52,6 +55,7 @@ func getInt() (val uint64) {
 	return
 }
 
+// Function to retrieve a string from command line input
 func getString() (val string) {
 	for {
 		fmt.Print("Please enter a string:")
@@ -64,6 +68,7 @@ func getString() (val string) {
 	return
 }
 
+// Function to retrieve a float from command line input
 func getFloat() (val float64) {
 	for {
 		fmt.Print("Please enter a float:")
@@ -76,16 +81,19 @@ func getFloat() (val float64) {
 	return
 }
 
+// Function to print the currency type options
 func printCurrencyTypeOptions() {
 	fmt.Println("SGD: 0")
 	fmt.Println("USD: 1")
 	fmt.Println("INR: 2")
 }
 
+// Function to check the password length
 func checkPasswordLength(password string) bool{
 	return len(password) != 11
 }
 
+// Function to create the message using user input, based on the option of service chosen
 func createMessage(option uint64) (msg Marshalable) {
 
 	switch option {
@@ -214,6 +222,7 @@ func createMessage(option uint64) (msg Marshalable) {
 	return msg
 }
 
+// Function to create an infinite loop asking the user to choose an option
 func ClientLoop(address string) {
 	var err error
 	var reply []byte
@@ -263,6 +272,7 @@ func ClientLoop(address string) {
 	}
 }
 
+// Function to block any user input when the user registers a monitor
 func (c *client) monitor(um unmarshal_functions, duration int) {
 	endTime := time.Now().Add(time.Minute * time.Duration(duration))
 	replyBuf := make([]byte, 1024)
@@ -282,6 +292,7 @@ func (c *client) monitor(um unmarshal_functions, duration int) {
 	}
 }
 
+// Function to send message and receive acknowledgement
 func (c *client) sendAndRecvMsg(data []byte) (reply []byte, err error) {
 
 	defer c.Conn.SetReadDeadline(time.Time{})
@@ -303,6 +314,7 @@ func (c *client) sendAndRecvMsg(data []byte) (reply []byte, err error) {
 	return
 }
 
+// main Entry function 
 func main() {
 	
 	// registry, err := NewRegistry(generateRegistry)

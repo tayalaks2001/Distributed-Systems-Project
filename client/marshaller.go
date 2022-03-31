@@ -7,6 +7,7 @@ import (
 	"math"
 )
 
+// Interface to describe the functions to be implemented by the marshaller
 type marshal_functions interface {
 	marshal() []byte
 	marshal_string(string_data string) []byte
@@ -17,26 +18,52 @@ type marshal_functions interface {
 	marshal_enum(enum_data Marshalable) []byte
 }
 
+// Dummy struct to represent a marshaller object
 type marshaller struct {
 }
 
+// Unimplemented function included in case of required extension at a later date
 func (m marshaller) marshal() []byte {
 	bs := make([]byte, 8)
 	return bs
 }
 
+/*
+Marsal unsigned 32-bit integer using binary package
+Keyword arguments:
+int_data: 32-bit value to be marshalled
+
+Returns:
+Marshalled 4-byte output
+*/
 func (m marshaller) marshal_uint32(int_data uint32) []byte {
 	data := make([]byte, 4)
 	binary.LittleEndian.PutUint32(data, int_data)
 	return data
 }
 
+/*
+Marsal unsigned 64-bit integer using binary package
+Keyword arguments:
+uint64_data: 64-bit value to be marshalled
+
+Returns:
+Marshalled 8-byte output
+*/
 func (m marshaller) marshal_uint64(uint64_data uint64) []byte {
 	data := make([]byte, 8)
 	binary.LittleEndian.PutUint64(data, uint64_data)
 	return data
 }
 
+/*
+Marsal 64-bit float using binary package
+Keyword arguments:
+float_data: 64-bit float to be marshalled
+
+Returns:
+Marshalled 8-byte output
+*/
 func (m marshaller) marshal_float(float_data float64) []byte {
 	data := make([]byte, 8)
 	var uint64_float uint64 = math.Float64bits(float_data)
@@ -44,6 +71,14 @@ func (m marshaller) marshal_float(float_data float64) []byte {
 	return data
 }
 
+/*
+Marsal string using binary package
+Keyword arguments:
+string_data: string to be marshalled
+
+Returns:
+Marshalled string output
+*/
 func (m marshaller) marshal_string(string_data string) []byte {
 	var str_len uint32 = uint32(len(string_data))
 	var len_marshalled []byte = m.marshal_uint32(str_len)
@@ -51,6 +86,14 @@ func (m marshaller) marshal_string(string_data string) []byte {
 	return append(len_marshalled, str_marshalled...)
 }
 
+/*
+Marsal objects implementing the Marshalable interface using binary package
+Keyword arguments:
+struct_data: struct to be marshalled
+
+Returns:
+Marshalled struct output
+*/
 func (m marshaller) marshal_struct(struct_data Marshalable) []byte {
 	data := make([]byte, 0)
 	var obj_type int = struct_data.object_type()
@@ -76,6 +119,14 @@ func (m marshaller) marshal_struct(struct_data Marshalable) []byte {
 	return data
 }
 
+/*
+Marsal enum using binary package
+Keyword arguments:
+enum_data: enum to be marshalled
+
+Returns:
+Marshalled 8-byte output
+*/
 func (m marshaller) marshal_enum(enum_data Marshalable) []byte {
 	data := make([]byte, 0)
 	data = append(data, m.marshal_uint32(uint32(enum_data.object_type()))...)
@@ -83,6 +134,16 @@ func (m marshaller) marshal_enum(enum_data Marshalable) []byte {
 	return data
 }
 
+/*
+Compile final message to be sent over the network
+Keyword arguments:
+m: marshaller that implements the marshal_functions interface
+message_id: id set by client
+object: response object (implementing Marshalable) to be marshalled
+
+Returns:
+Complete marshalled message
+*/
 func compile_message(m marshal_functions, message_id int, object Marshalable) []byte {
 	result := make([]byte, 0)
 	result = append(result, m.marshal_uint32(uint32(message_id))...)
@@ -93,6 +154,7 @@ func compile_message(m marshal_functions, message_id int, object Marshalable) []
 	return result
 }
 
+// Testing function
 func printDetails(m marshal_functions) {
 	fmt.Println((m.marshal_string("Hello There!")))
 	fmt.Println((m.marshal_uint64(1024)))
@@ -107,6 +169,7 @@ func printDetails(m marshal_functions) {
 	fmt.Println((compile_message(m, 16, dMessage)))
 }
 
+// Function to generate the registry of all the custom structs used in code
 func generateRegistry(r *Registry) error {
 	//r.Put(&foo{})
 	r.Put(&CloseAccountMessage{})

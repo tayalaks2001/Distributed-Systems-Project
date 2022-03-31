@@ -7,6 +7,7 @@ import (
 	"reflect"
 )
 
+// Interface that specifies the functions that must be implemented by the unmarshaller
 type unmarshal_functions interface {
 	unmarshal_string(message_len int, message []byte) string
 	unmarshal_uint64(message []byte) uint64
@@ -16,10 +17,20 @@ type unmarshal_functions interface {
 	unmarshal_object(message []byte) Marshalable
 }
 
+// Unmarshaller struct containing the registry of all structs and objectIDs 
 type unmarshaller struct {
 	registry *Registry
 }
 
+/*
+Unmarshal string using the string cast method.
+Keyword arguments:
+message_len: length of the string
+message: byte array to be unmarshalled
+
+Returns: 
+String object
+*/
 func (um unmarshaller) unmarshal_string(message_len int, message []byte) string {
 	if message_len != len(message) {
 		fmt.Println("Error! unmarshal_string is called with an incorrect input!")
@@ -28,24 +39,64 @@ func (um unmarshaller) unmarshal_string(message_len int, message []byte) string 
 	return string(message)
 }
 
+/*
+Unmarshal 8-byte unsigned int using the binary package.
+Keyword arguments:
+message: byte array to be unmarshalled
+
+Returns: 
+unsigned int 64 value
+*/
 func (um unmarshaller) unmarshal_uint64(message []byte) uint64 {
 	return binary.LittleEndian.Uint64((message))
 }
 
+/*
+Unmarshal 4-byte unsigned int using the binary package.
+Keyword arguments:
+message: byte array to be unmarshalled
+
+Returns: 
+unsigned int 32 value
+*/
 func (um unmarshaller) unmarshal_uint32(message []byte) uint32 {
 	return binary.LittleEndian.Uint32((message))
 }
 
+/*
+Unmarshal 8-byte float using the binary and math packages.
+Keyword arguments:
+message: byte array to be unmarshalled
+
+Returns: 
+64-bit float value
+*/
 func (um unmarshaller) unmarshal_float(message []byte) float64 {
 	var uint64_bits uint64 = binary.LittleEndian.Uint64(message)
 	return math.Float64frombits(uint64_bits)
 }
 
+/*
+Unmarshal enum object
+Keyword arguments:
+message: byte array to be unmarshalled
+
+Returns: 
+enum object
+*/
 func (um unmarshaller) unmarshal_enum(message []byte) Marshalable {
 	var value int = int(um.unmarshal_uint32(message[4:8]))
 	return CurrencyType(0).from_fields(map[int]any{0: value})
 }
 
+/*
+Unmarshal marshalled Marshalable object
+Keyword arguments:
+message: byte array to be unmarshalled
+
+Returns: 
+Marshalable object
+*/
 func (um unmarshaller) unmarshal_object(message []byte) Marshalable {
 
 	var object_id int = int(um.unmarshal_uint32(message[:4]))
@@ -91,6 +142,30 @@ func (um unmarshaller) unmarshal_object(message []byte) Marshalable {
 	return object
 }
 
+
+/*
+Decompile message received from server.
+Keyword arguments:
+um: unmarshaller object which implements the unmarshal_functions interface
+message: byte array to be decompiled
+
+Returns: 
+Message id and Marshalable object
+*/
+func decompile_message(um unmarshal_functions, message []byte) (int, Marshalable) {
+	var message_len int = int(um.unmarshal_uint32(message[:4]))
+	if len(message)-4 != message_len {
+		fmt.Println("Received message length does not match expected length!")
+		return -1, nil
+	}
+	var message_id int = int(um.unmarshal_uint32(message[4:8]))
+	var object Marshalable = um.unmarshal_object(message[8:])
+
+	return message_id, object
+}
+
+
+// Testing function
 func printUnmarshalDetails(um unmarshal_functions) {
 	string_bytes := []byte{12, 0, 0, 0, 72, 101, 108, 108, 111, 32, 84, 104, 101, 114, 101, 33}
 	uint64_bytes := []byte{0, 4, 0, 0, 0, 0, 0, 0}
@@ -113,16 +188,4 @@ func printUnmarshalDetails(um unmarshal_functions) {
 	message_id, final_object = decompile_message(um, recvd_mssg_bytes)
 	fmt.Println("Message ID: ", message_id)
 	fmt.Println("Object: ", final_object)
-}
-
-func decompile_message(um unmarshal_functions, message []byte) (int, Marshalable) {
-	var message_len int = int(um.unmarshal_uint32(message[:4]))
-	if len(message)-4 != message_len {
-		fmt.Println("Received message length does not match expected length!")
-		return -1, nil
-	}
-	var message_id int = int(um.unmarshal_uint32(message[4:8]))
-	var object Marshalable = um.unmarshal_object(message[8:])
-
-	return message_id, object
 }
