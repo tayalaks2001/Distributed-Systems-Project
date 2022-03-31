@@ -28,6 +28,7 @@ import messages.close_account_response as close_account_response
 import services
 
 
+# ------ Server class encapsulating network connection and server loop ------ 
 class _Server(abc.ABC):
 
     def __init__(self, addr, port, success_prob=1.0) -> None:
@@ -36,6 +37,7 @@ class _Server(abc.ABC):
         self.monitors: T.List[Monitor] = []
         self.success_prob = success_prob
 
+    # Main server loop communicating with client
     def server_loop(self):
         while True:
             msg, address = self.socket.recvfrom(1024)
@@ -52,6 +54,7 @@ class _Server(abc.ABC):
             except NotImplementedError as e:
                 print(e)
 
+    # Helper function to send messages to client
     def send(self, msg, addr):
         print(f"Sent {msg=} to {addr=}")
         if random.random() > self.success_prob:
@@ -59,10 +62,13 @@ class _Server(abc.ABC):
             return
         self.socket.sendto(msg, addr)
 
+    # Helper function to handle incoming client requests
+    # Implemented in atleast once and atmost once servers
     @abc.abstractmethod
     def handle(self, msg_id, obj, address):
         pass
 
+    # Helper function to send monitor msg to subscribed clients
     def _send_update_message(self, update_msg):
         print(self.monitors)
         new_monitors = []
@@ -75,6 +81,7 @@ class _Server(abc.ABC):
 
         self.monitors = new_monitors
 
+    # Generic method to handle incoming request and call appropriate service function based on request type
     @singledispatchmethod
     def _handle(self, msg, addr):
         raise NotImplementedError(f"Msg of type {type(msg)} has not been handled")
@@ -150,6 +157,7 @@ class _Server(abc.ABC):
         )
 
 
+# ------ Server class to implement at most once invocation semantics ------
 class AtmostOnceServer(_Server):
     def __init__(self, addr, port, success_prob) -> None:
         super().__init__(addr, port, success_prob=success_prob)
@@ -157,6 +165,7 @@ class AtmostOnceServer(_Server):
             T.Tuple[str, int], T.Dict[int, Marshalable]
         ] = defaultdict(dict)
 
+    # Implementation of handle method decalared in server
     def handle(self, msg_id, obj, address):
         if address in self._recvd_dict and msg_id in self._recvd_dict[address]:
             response = self._recvd_dict[address][msg_id]
@@ -172,13 +181,17 @@ class AtmostOnceServer(_Server):
         self._send_update_message(update_message)
 
 
+# ------ Server class to implement at least once invocation semantics ------
 class AtleastOnceServer(_Server):
+
+    # Implementation of handle method decalared in server
     def handle(self, msg_id, obj, address):
         response, update_message = self._handle(obj, address)
         self.send(compile_message(msg_id, response), address)
         self._send_update_message(update_message)
 
 
+# ------ Driver code ------
 if __name__ == "__main__":
     s = AtmostOnceServer("127.0.0.1", 2222)
     s.server_loop()
