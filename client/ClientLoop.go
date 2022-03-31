@@ -327,5 +327,9 @@ func main() {
 	// printUnmarshalDetails(um)
 	// var c CurrencyType = CurrencyType(1)
 	// fmt.Println(reflect.TypeOf(c))
-	ClientLoop("localhost:2222")
+	if len(os.Args) != 3 {
+		fmt.Println("Usage go run . <server ip> <port>")
+		os.Exit(-1)
+	}
+	ClientLoop(fmt.Sprintf("%s:%s", os.Args[1], os.Args[2]))
 }

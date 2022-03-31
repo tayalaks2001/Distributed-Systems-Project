@@ -99,7 +99,6 @@ func (m marshaller) marshal_struct(struct_data Marshalable) []byte {
 	var obj_type int = struct_data.object_type()
 	data = append(data, m.marshal_uint32(uint32(obj_type))...)
 	var fields_map map[int]any = struct_data.get_fields()
-	fmt.Println(fields_map)
 	for field_id, field_val := range fields_map {
 		data = append(data, m.marshal_uint32((uint32(field_id)))...)
 		switch v := field_val.(type) {
