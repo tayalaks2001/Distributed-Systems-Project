@@ -11,7 +11,15 @@ from unmarshaller import *
 class Marshaller:
 	
 	@staticmethod
-	def marshal_string(data):
+	def marshal_string(data: str):
+		"""
+		Marshal string using the string encode method.
+		Keyword arguments:
+		data: string to be marshalled
+
+		Returns: 
+		Marshalled string output/type error if data is not a string object.
+		"""
 
 		if not isinstance(data, str):
 			print("Error! marshal_string called on non-string value!")
@@ -21,7 +29,7 @@ class Marshaller:
 
 		str_len = len(data)
 		str_len = Marshaller.marshal_int(str_len, 4)
-		content = data.encode('utf-8')	# No format specifier available to marshal string in struct 
+		content = data.encode('utf-8')
 
 		result += str_len + content
 
@@ -29,7 +37,16 @@ class Marshaller:
 
 
 	@staticmethod
-	def marshal_int(data, num_bytes = 8):
+	def marshal_int(data: int, num_bytes: int = 8):
+		"""
+		Marshal int using the struct pack method.
+		Keyword arguments:
+		data: value to be marshalled
+		num_bytes: number of bytes in output (4 or 8)
+
+		Returns: 
+		Marshalled int output/type error if data is not an int/float object.
+		"""
 		
 		if isinstance(data, float):
 			print("marshal_int called on float value! Converting to int...")
@@ -47,6 +64,14 @@ class Marshaller:
 	
 	@staticmethod
 	def marshal_float(data):
+		"""
+		Marshal float using the struct pack method.
+		Keyword arguments:
+		data: value to be marshalled
+
+		Returns: 
+		Marshalled float output/type error if data is not an int/float object.
+		"""
 
 		if isinstance(data, int):
 			print("marshal_float on int value! Converting to float...")
@@ -61,7 +86,15 @@ class Marshaller:
 
 	@staticmethod
 	def marshal_enum(data):
-		
+		""""
+		Marshal enum type object.
+		Keyword arguments:
+		data: value to be marshalled
+
+		Returns: 
+		Marshalled float output/type error if data is not an enum object.
+		"""
+
 		if not isinstance(data, Enum):
 			print("Error! marshal_enum called on non-enum value!")
 			raise TypeError
@@ -77,7 +110,15 @@ class Marshaller:
 
 	@staticmethod
 	def marshal_object(data):
-		
+		"""
+		Marshal objects derived from Marshalable class.
+		Keyword arguments:
+		data: object to be marshalled
+
+		Returns: 
+		Marshalled object output/type error if object doesn't have Marshalable as parent class.
+		"""
+
 		data_class = type(data)
 
 		if not issubclass(data_class, Marshalable):
@@ -109,6 +150,15 @@ class Marshaller:
 
 
 def compile_message(message_id: int, object: Marshalable) -> bytes:
+	"""
+	Compile final message to be sent over.
+	Keyword arguments:
+	message_id: id from the response object being sent to client
+	object: response object to be marshalled
+
+	Returns: 
+	Marshalled object output/type error if object doesn't have Marshalable as parent class.
+	"""
 
 	if not issubclass(type(object), Marshalable):
 		print("Object sent to marshaller is inherited from Marshalable!")
@@ -127,22 +177,3 @@ def compile_message(message_id: int, object: Marshalable) -> bytes:
 	result = marshalled_message_len + result
 
 	return result
-
-if __name__ == '__main__':
-	print(Marshaller.marshal_string("Hello There").hex())
-	print(Marshaller.marshal_int(1024).hex())
-	print(Marshaller.marshal_float(5.1).hex())
-	# print(Marshaller.marshal_object(BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
-	# print(compile_message(12, BalanceMessage("Sid", 10853693087894514759, "password123")).hex())
-	print(Marshaller.marshal_object(DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)).hex())
-	print(compile_message(16, DepositMessage("Sid", 10853693087894514759, "password123", 1, 105.5)))
-	print(list(compile_message(20, CreateNewAccountOutput(10853693087894514759, "New account created with account number " + str(10853693087894514759)))))
-	print(list(Marshaller.marshal_enum(CurrencyType(2))))
-	print(list(compile_message(20, CreateNewAccountInput("Sid", "password", 105.5, CurrencyType(2)))))
-	
-	ba = BankAccount("aks", 123, "pass")
-	comp_ba = compile_message(1, ba)
-	print(comp_ba)
-
-	uncomp_ba = decompile_message(comp_ba)
-	print(uncomp_ba)

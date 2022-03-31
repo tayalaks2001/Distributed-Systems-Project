@@ -6,11 +6,15 @@ from currency_type import CurrencyType
 class Unmarshaller:
 
     @staticmethod
-    def unmarshal(message):
-        ...
-    
-    @staticmethod
     def unmarshal_int(message):
+        """
+		Unmarshal int using the struct unpack method.
+		Keyword arguments:
+		message: byte array to be unmarshalled
+
+		Returns: 
+		Int object/value error if byte array can't be unpacked
+		"""
 
         if len(message) == 4:
             return struct.unpack('<i', message)[0]
@@ -23,7 +27,15 @@ class Unmarshaller:
 
     @staticmethod
     def unmarshal_float(message):
-        
+        """
+		Unmarshal float using the struct unpack method.
+		Keyword arguments:
+		message: byte array to be unmarshalled
+
+		Returns: 
+		Float object/value error if byte array can't be unpacked
+		"""
+
         if len(message) != 8:
             print("Error! unmarshal_float is called with an incorrect input!")
             raise ValueError
@@ -33,6 +45,14 @@ class Unmarshaller:
 
     @staticmethod
     def unmarshal_string(message_len, message):
+        """
+		Unmarshal string using the string decode method.
+		Keyword arguments:
+		message: byte array to be unmarshalled
+
+		Returns: 
+		String object/value error if byte array can't be unpacked
+		"""
 
         if message_len != len(message):
             print("Error! unmarshal_string is called with an incorrect input!")
@@ -43,14 +63,26 @@ class Unmarshaller:
     
     @staticmethod
     def unmarshal_enum(message):
+        """
+		Unmarshal enum object.
+		Keyword arguments:
+		message: byte array to be unmarshalled
+
+		Returns: 
+		enum object/value error if byte array can't be unpacked
+		"""
 
         if len(message) != 8:
             print("Error! unmarshal_enum is called with an incorrect input!")
             raise ValueError
         
         object_id = Unmarshaller.unmarshal_int(message[:4])
-        # object_class = MarshalableRegistry.get_registry()[object_id]
-        object_class = CurrencyType     # All enums unmarshalled as CurrencyType
+        if object_id == CurrencyType.object_type():
+            object_class = CurrencyType
+        else:
+            print("No enum type exists with the given object type!")
+            raise ValueError
+
         value = Unmarshaller.unmarshal_int(message[4:8])
 
         object = object_class(value)
@@ -60,6 +92,15 @@ class Unmarshaller:
 
     @staticmethod
     def unmarshal_object(message):
+        """
+		Unmarshal marshalled object.
+		Keyword arguments:
+		message: byte array to be unmarshalled
+
+		Returns: 
+		Object of instance of subtype marshalable/type error if byte array can't be unpacked
+		"""
+
         object_id = Unmarshaller.unmarshal_int(message[:4])
         object_class = MarshalableRegistry.get_registry()[object_id]
 
@@ -98,7 +139,15 @@ class Unmarshaller:
 
 
 def decompile_message(message: bytes) -> list:
-    
+    """
+	Decompile message received from client.
+	Keyword arguments:
+	message: byte array to be decompiled
+
+	Returns: 
+	Message id and object/value error if object is in improper format.
+	"""
+
     try:   
         message_len = Unmarshaller.unmarshal_int(message[:4])
         # Verify message length
