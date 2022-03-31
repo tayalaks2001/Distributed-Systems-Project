@@ -47,7 +47,7 @@ class _Server(abc.ABC):
                 continue
 
             msg_id, obj = decompile_message(msg)
-            print(obj)
+            print(f"Recieved message {obj}")
             try:
                 self.handle(msg_id, obj, address)
 
@@ -56,7 +56,6 @@ class _Server(abc.ABC):
 
     # Helper function to send messages to client
     def send(self, msg, addr):
-        print(f"Sent {msg=} to {addr=}")
         if random.random() > self.success_prob:
             print(f"Dropping response...")
             return
@@ -70,7 +69,6 @@ class _Server(abc.ABC):
 
     # Helper function to send monitor msg to subscribed clients
     def _send_update_message(self, update_msg):
-        print(self.monitors)
         new_monitors = []
         for monitor in self.monitors:
             if not monitor.check_expired():
@@ -173,9 +171,7 @@ class AtmostOnceServer(_Server):
             return
 
         response, update_message = self._handle(obj, address)
-        print(msg_id)
-        print(response)
-        print(update_message)
+        print(f"Sent {msg_id=} {response=} to {address=}")
         self._recvd_dict[address][msg_id] = response
         self.send(compile_message(msg_id, response), address)
         self._send_update_message(update_message)
@@ -187,6 +183,7 @@ class AtleastOnceServer(_Server):
     # Implementation of handle method decalared in server
     def handle(self, msg_id, obj, address):
         response, update_message = self._handle(obj, address)
+        print(f"Sent {msg_id=} {response=} to {address=}")
         self.send(compile_message(msg_id, response), address)
         self._send_update_message(update_message)
 

@@ -63,7 +63,7 @@ def close_account(name: str, accNum: str, password: str):
     bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
     authorized = bankAccount is not None
     mssg = getAuthorizationMessage(authorized)
-    print(mssg)
+    # print(mssg)
     if not authorized:
         return ErrorMessage(401, mssg), "Attempted unauthorized access"
     successStatus = deleteRecord(bankAccountToDelete=bankAccount)
@@ -95,7 +95,7 @@ def deposit(name: str, accNum: int, password: str, currencyType: int, amount: fl
     bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
     authorized = bankAccount is not None
     mssg = getAuthorizationMessage(authorized)
-    print(mssg)
+    # print(mssg)
     if not authorized:
         return ErrorMessage(401, mssg), "Attempted unauthorized access"
     
@@ -131,7 +131,7 @@ def withdraw(name: str, accNum: int, password: str, currencyType: int, amount: f
     bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
     authorized = bankAccount is not None
     mssg = getAuthorizationMessage(authorized)
-    print(mssg)
+    # print(mssg)
     if not authorized:
         return ErrorMessage(401, mssg), "Attempted unauthorized access"
     
@@ -169,7 +169,7 @@ def register_monitor(name: str, accNum: int, password: str, duration: int, clien
     bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
     authorized = bankAccount is not None
     mssg = getAuthorizationMessage(authorized)
-    print(mssg)
+    # print(mssg)
     if not authorized:
         return ErrorMessage(401, mssg), None, "Attempted unauthorized access"
     
@@ -198,7 +198,7 @@ def query_balance(name: str, accNum: int, password: str) -> T.Tuple[T.Union[Bala
     bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
     authorized = bankAccount is not None
     mssg = getAuthorizationMessage(authorized)
-    print(mssg)
+    # print(mssg)
     if not authorized:
         return ErrorMessage(401, mssg), "Attempted unauthorized access"
 
@@ -226,7 +226,7 @@ def transfer(name: str, accNum: int, password: str, currencyType: int, transferA
     bankAccount = checkIDAndPassword(name=name, accNum=accNum, password=password)
     authorized = bankAccount is not None
     mssg = getAuthorizationMessage(authorized)
-    print(mssg)
+    # print(mssg)
     if not authorized:
         return ErrorMessage(401, mssg), "Attempted unauthorized access"
 

@@ -11,10 +11,10 @@ database_file = "./bank_accounts.dat"
 def saveToBinaryDatabase(bankAccount: BankAccount) -> None:
     bankAccounts = readFromBinaryDatabase()
     bankAccounts.append(bankAccount)
-    print(bankAccounts)
+    # print(bankAccounts)
     with open(database_file, 'wb') as f:
-        for record in bankAccounts:
-            print(record)
+        # for record in bankAccounts:
+            # print(record)
         pickle.dump(bankAccounts, f)
 
 def readFromBinaryDatabase() -> List[BankAccount]:
@@ -24,21 +24,21 @@ def readFromBinaryDatabase() -> List[BankAccount]:
                 bankAccounts = pickle.load(f)
             except Exception as e: 
                 print(e)
-        print(bankAccounts)
+        # print(bankAccounts)
         return bankAccounts
     except: 
         print("File doesn't exist; Going to create...")
         return []
 
 def checkIDAndPassword(name: str, accNum: int, password: str) -> BankAccount:
-     print("In check pwd")
+     # print("In check pwd")
      if len(password) != 11:
          return None
      bankAccounts = readFromBinaryDatabase()
      for bankAccount in bankAccounts:
          if bankAccount._name == name and bankAccount._accNum == accNum:
              if bcrypt.checkpw(password.encode('utf8'), bankAccount._passwordHash):
-                 print("Authorized")
+                 # print("Authorized")
                  return bankAccount
              else:
                  return None
@@ -58,7 +58,7 @@ def getAuthorizationMessage(authorized: bool) -> str:
         return "Either account number, name or password is incorrect. Please check again."
  
 def updateRecord(editedBankAccount: BankAccount) -> bool:
-    print("In update record")
+    # print("In update record")
     bankAccounts = readFromBinaryDatabase()
     successStatus = False
     for i, bankAccount in enumerate(bankAccounts):
